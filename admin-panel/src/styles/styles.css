@@ -1,0 +1,216 @@
+/* Estilos generales */
+body {
+  margin: 0;
+  padding: 0;
+  width: 100vw !important;
+  height: 100vh !important;
+  overflow-x: hidden;
+  background: rgb(0, 212, 255);
+  background: linear-gradient(
+    90deg,
+    rgba(0, 212, 255, 1) 0%,
+    rgba(9, 9, 121, 1) 35%,
+    rgba(2, 0, 36, 1) 100%
+  );
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #ffffff;
+}
+
+/* Barra de navegación */
+.navbar {
+  background-color: #111827 !important;
+  border-bottom: 2px solid #00b4d8;
+  box-shadow: 0.5px 0.5px 2px lightgray;
+}
+
+.navbar-brand {
+  color: #ffffff;
+  font-weight: bold;
+}
+
+.navbar .btn {
+  border-radius: 20px;
+  font-weight: 700;
+}
+
+#addGameBtn {
+  background: rgb(0, 140, 255);
+  box-shadow: 0 0 25px rgb(0, 140, 255);
+  color: #ffffff;
+  transition: 0.5s;
+}
+
+#addGameBtn:hover {
+  box-shadow: 0 0 5px rgb(0, 140, 255), 0 0 25px rgb(0, 140, 255),
+    0 0 50px rgb(0, 140, 255), 0 0 100px rgb(0, 140, 255);
+}
+
+#sortGamesBtn {
+  background: rgb(255, 165, 0);
+  color: #ffffff;
+  border: none;
+}
+
+.btn-outline-warning {
+  color: #ffc107;
+  border-color: #ffc107;
+  transition: 0.5s;
+}
+
+.btn-outline-warning:hover {
+  box-shadow: 0 0 10px rgba(255, 193, 7, 0.9);
+}
+
+/* Contenedor principal */
+.container {
+  padding: 20px;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  gap: 2px;
+  flex-wrap: nowrap; /* Desactiva el salto de línea */
+}
+
+/* Tarjetas de juego */
+.card {
+  background-color: black;
+  border: 1px solid black;
+  border-radius: 6px;
+  transition: transform 0.2s ease-in-out;
+  height: 400px; /* Ajuste de altura */
+  width: 250px; /* Ajuste de ancho */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.card img {
+  height: 300px; /* Ajuste de altura de la imagen */
+  object-fit: cover;
+  border-radius: 8px;
+  border-bottom: 2px solid #00b4d8;
+}
+
+.card-title {
+  font-size: 1.2rem; /* Ajuste de tamaño de texto */
+  text-align: center;
+  margin-top: 10px;
+  color: #00d4ff;
+}
+
+.card-text {
+  color: #ced4da;
+  text-align: center;
+}
+
+.card:hover {
+  transform: scale(1.05);
+}
+
+.card .btn {
+  margin-top: 5px;
+  border-radius: 5px;
+  font-weight: 700;
+}
+
+.btn-outline-primary {
+  color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+.btn-outline-danger {
+  color: #dc3545;
+  border-color: #dc3545;
+}
+
+/* Modales */
+.modal-content {
+  background-color: #2c2f48;
+  color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+.modal-header {
+  border-bottom: 1px solid #394168;
+}
+
+.modal-title {
+  color: #00d4ff;
+}
+
+.modal-body label {
+  color: #ced4da;
+}
+
+.modal-body input,
+.modal-body select {
+  background-color: #151a30;
+  color: #ffffff;
+  border: 1px solid #394168;
+  border-radius: 5px;
+}
+
+.modal-body button {
+  background-color: #0d6efd;
+  color: #ffffff;
+  border-radius: 5px;
+}
+
+/* Botones */
+button {
+  transition: all 0.2s ease-in-out;
+}
+
+button:hover {
+  opacity: 0.9;
+  transform: scale(1.02);
+}
+
+/* Estilos para la barra lateral */
+.sidebar {
+  width: 200px;
+  height: calc(100vh - 50px); /* Altura menos la barra de navegación */
+  background-color: #111827;
+  color: #ffffff;
+  padding: 20px;
+  position: fixed;
+  /* top: 70px; /* Altura de la barra de navegación */
+  left: 0;
+  overflow-y: auto;
+}
+
+.sidebar-title {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: #00d4ff;
+}
+
+.sidebar-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.category-item {
+  padding: 10px;
+  margin: 5px 0;
+  border-radius: 5px;
+  background-color: #151a30;
+  transition: background-color 0.3s ease, transform 0.2s ease-in-out;
+  cursor: pointer;
+  text-align: center;
+}
+
+.category-item:hover {
+  background-color: #00d4ff;
+  color: #000;
+  transform: scale(1.05);
+}
+
+.main-content {
+  margin-left: 220px; /* Ancho de la barra lateral */
+  padding: 20px;
+}

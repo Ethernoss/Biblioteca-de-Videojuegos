@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Panel de Administración - Biblioteca de Videojuegos</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../../src/styles/styles.css" />
+  </head>
+  <body>
+    <!-- Barra de navegación -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">🎮 Game Library Admin</a>
+        <button
+          id="addGameBtn"
+          class="btn btn-success ms-auto me-2"
+          data-bs-toggle="modal"
+          data-bs-target="#addGameModal"
+        >
+          Agregar Juego
+        </button>
+        <button
+          id="sortGamesBtn"
+          class="btn btn-outline-light me-2"
+          data-bs-toggle="modal"
+          data-bs-target="#sortGamesModal"
+        >
+          Ordenar Juegos
+        </button>
+        <input
+          class="form-control me-2"
+          type="search"
+          placeholder="Buscar juegos"
+          style="max-width: 300px"
+        />
+        <button class="btn btn-outline-warning">Regresar al Dashboard</button>
+      </div>
+    </nav>
+
+    <!-- Contenedor principal -->
+    <aside class="sidebar">
+      <ul id="categoryList" class="list-group">
+        <!-- Las categorías se generarán dinámicamente -->
+      </ul>
+    </aside>
+    <main class="container my-5">
+      <div class="row row-cols-1 row-cols-md-4 g-4">
+        <!-- Las tarjetas de los juegos se generarán aquí dinámicamente desde Dashboard.js -->
+      </div>
+    </main>
+
+    <!-- Modal para agregar juegos -->
+    <div
+      class="modal fade"
+      id="addGameModal"
+      tabindex="-1"
+      aria-labelledby="addGameModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="addGameModalLabel">Agregar Juego</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="addGameForm">
+              <div class="mb-3">
+                <label for="gameTitle" class="form-label">Título</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="gameTitle"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label for="gamePrice" class="form-label">Precio</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="gamePrice"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label for="gamePlatform" class="form-label">Plataforma</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="gamePlatform"
+                  required
+                />
+              </div>
+              <button type="submit" class="btn btn-primary">Agregar</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal para ordenar juegos -->
+    <div
+      class="modal fade"
+      id="sortGamesModal"
+      tabindex="-1"
+      aria-labelledby="sortGamesModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="sortGamesModalLabel">Ordenar Juegos</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="sortGamesForm">
+              <div class="mb-3">
+                <label for="sortOption" class="form-label">Ordenar por</label>
+                <select class="form-select" id="sortOption">
+                  <option value="title">Título</option>
+                  <option value="price">Precio</option>
+                  <option value="platform">Plataforma</option>
+                </select>
+              </div>
+              <button type="submit" class="btn btn-primary">Ordenar</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal para editar -->
+    <div
+      class="modal fade"
+      id="editGameModal"
+      tabindex="-1"
+      aria-labelledby="editGameModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="editGameModalLabel">Modificar Juego</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="editGameForm">
+              <div class="mb-3">
+                <label for="editGameTitle" class="form-label">Título</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="editGameTitle"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label for="editGamePrice" class="form-label">Precio</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="editGamePrice"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label for="editGamePlatform" class="form-label"
+                  >Plataforma</label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  id="editGamePlatform"
+                  required
+                />
+              </div>
+              <button type="submit" class="btn btn-primary">
+                Guardar Cambios
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal para eliminar -->
+    <div
+      class="modal fade"
+      id="deleteGameModal"
+      tabindex="-1"
+      aria-labelledby="deleteGameModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="deleteGameModalLabel">
+              Eliminar Juego
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <p>¿Estás seguro de que deseas eliminar este juego?</p>
+            <button id="confirmDeleteBtn" class="btn btn-danger">
+              Eliminar
+            </button>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancelar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../src/app.js" type="module"></script>
+  </body>
+</html>

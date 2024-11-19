@@ -1,0 +1,17 @@
+# Ignorar node_modules
+node_modules/
+
+# Ignorar logs
+*.log
+npm-debug.log*
+
+# Ignorar entornos locales
+.env
+
+# Ignorar cachés
+.cache/
+dist/
+
+# Ignorar configuraciones específicas de editores
+.vscode/
+.idea/
