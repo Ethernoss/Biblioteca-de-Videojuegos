@@ -9,13 +9,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Inicializar categorías
   const categories = [
-    "Acción",
-    "Aventura",
-    "Arcade",
-    "Deportes",
-    "Estrategia",
-    "Simulación",
-    "Juegos musicales",
+    "Action",
+    "Adventura",
+    "RPG",
+    "Shooter",
+    "Strategy",
+    "Simulation",
+    "Sports",
+    "Racing",
+    "Puzzle",
+    "Plataformer",
+    "Fighting",
+    "Horror",
+    "Survival",
+    "MMO",
+    "Indie",
   ];
 
   const categoryList = document.querySelector("#categoryList");

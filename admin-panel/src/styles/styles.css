@@ -18,6 +18,10 @@ body {
 
 /* Barra de navegación */
 .navbar {
+  position: fixed; /* Fija la barra de navegación en la parte superior */
+  top: 0; /* Alineación superior */
+  width: 100%; /* Se asegura de que ocupe todo el ancho de la pantalla */
+  z-index: 1050; /* Superior al z-index de la sidebar */
   background-color: #111827 !important;
   border-bottom: 2px solid #00b4d8;
   box-shadow: 0.5px 0.5px 2px lightgray;
@@ -26,6 +30,10 @@ body {
 .navbar-brand {
   color: #ffffff;
   font-weight: bold;
+}
+.nav-link {
+  font-size: 0.9rem;
+  margin-right: 10px;
 }
 
 .navbar .btn {
@@ -46,9 +54,14 @@ body {
 }
 
 #sortGamesBtn {
-  background: rgb(255, 165, 0);
+  background: rgb(0, 140, 255);
+  box-shadow: 0 0 25px rgb(0, 140, 255);
   color: #ffffff;
-  border: none;
+  transition: 0.5s;
+}
+#sortGamesBtn:hover {
+  box-shadow: 0 0 5px rgb(0, 140, 255), 0 0 25px rgb(0, 140, 255),
+    0 0 50px rgb(0, 140, 255), 0 0 100px rgb(0, 140, 255);
 }
 
 .btn-outline-warning {
@@ -63,40 +76,38 @@ body {
 
 /* Contenedor principal */
 .container {
-  padding: 20px;
+  padding: 50px;
+  margin-left: 200px;
 }
 
 .row {
   display: flex;
-  justify-content: space-between;
-  gap: 2px;
-  flex-wrap: nowrap; /* Desactiva el salto de línea */
+  justify-content: space-between; /* Distribuye espacio uniforme entre las tarjetas */
+  flex-wrap: wrap; /* Permite que las tarjetas se ajusten al ancho de la pantalla */
+  margin: 0 auto; /* Centra el contenido de la fila */
 }
 
-/* Tarjetas de juego */
+/* Estilos de las tarjetas de juego */
 .card {
   background-color: black;
   border: 1px solid black;
   border-radius: 6px;
   transition: transform 0.2s ease-in-out;
-  height: 400px; /* Ajuste de altura */
-  width: 250px; /* Ajuste de ancho */
+  height: 360px; /* Aumenta la altura para dar espacio al botón */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
-
 .card img {
-  height: 300px; /* Ajuste de altura de la imagen */
-  object-fit: cover;
+  height: 240px; /* Ajusta la altura de la imagen */
+  object-fit: cover; /* Mantiene la proporción de las imágenes */
   border-radius: 8px;
-  border-bottom: 2px solid #00b4d8;
 }
 
 .card-title {
   font-size: 1.2rem; /* Ajuste de tamaño de texto */
   text-align: center;
-  margin-top: 10px;
+  margin-top: 5px;
   color: #00d4ff;
 }
 
@@ -169,17 +180,19 @@ button:hover {
   transform: scale(1.02);
 }
 
-/* Estilos para la barra lateral */
 .sidebar {
   width: 200px;
-  height: calc(100vh - 50px); /* Altura menos la barra de navegación */
+  height: calc(
+    100vh - 50px
+  ); /* Altura de la ventana menos la altura de la navbar */
   background-color: #111827;
   color: #ffffff;
   padding: 20px;
   position: fixed;
-  /* top: 70px; /* Altura de la barra de navegación */
+  top: 50px; /* Ajusta este valor según la altura de la barra de navegación */
   left: 0;
   overflow-y: auto;
+  z-index: 1000; /* Asegura que la barra lateral esté encima de otros elementos */
 }
 
 .sidebar-title {
@@ -213,4 +226,61 @@ button:hover {
 .main-content {
   margin-left: 220px; /* Ancho de la barra lateral */
   padding: 20px;
+}
+
+.inputbox {
+  position: relative;
+  width: 250px;
+  margin-right: 25px;
+}
+
+.inputbox input {
+  position: relative;
+  width: 100%;
+  padding: 20px 10px 10px;
+  background: transparent;
+  outline: none;
+  box-shadow: none;
+  border: none;
+  color: #23242a;
+  font-size: 1em;
+  letter-spacing: 0.05em;
+  transition: 0.5s;
+  z-index: 10;
+}
+
+.inputbox span {
+  position: absolute;
+  left: 0;
+  padding: 20px 10px 10px;
+  font-size: 1em;
+  color: #8f8f8f;
+  letter-spacing: 00.05em;
+  transition: 0.5s;
+  pointer-events: none;
+}
+
+.inputbox input:valid ~ span,
+.inputbox input:focus ~ span {
+  color: #45f3ff;
+  transform: translateX(-10px) translateY(-34px);
+  font-size: 0, 75em;
+}
+
+.inputbox i {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 2px;
+  background: #45f3ff;
+  border-radius: 4px;
+  transition: 0.5s;
+  pointer-events: none;
+  z-index: 9;
+}
+
+.inputbox input:valid ~ i,
+.inputbox input:focus ~ i {
+  height: 44px;
 }

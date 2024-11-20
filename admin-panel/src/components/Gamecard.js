@@ -32,6 +32,38 @@ export function GameCard(games = null) {
       category: "Simulación",
       image: "https://via.placeholder.com/300x400?text=Cyberpunk",
     },
+    {
+      id: 5,
+      title: "FIFA 22",
+      price: 55,
+      platform: "PlayStation 4",
+      category: "Deportes",
+      image: "https://via.placeholder.com/300x400?text=FIFA",
+    },
+    {
+      id: 6,
+      title: "Super Mario Odyssey",
+      price: 50,
+      platform: "Nintendo Switch",
+      category: "Aventura",
+      image: "https://via.placeholder.com/300x400?text=Mario",
+    },
+    {
+      id: 7,
+      title: "The Sims 4",
+      price: 40,
+      platform: "PC (Origin)",
+      category: "Simulación",
+      image: "https://via.placeholder.com/300x400?text=The+Sims",
+    },
+    {
+      id: 8,
+      title: "Rocket League",
+      price: 20,
+      platform: "PC (Epic Games)",
+      category: "Deportes",
+      image: "https://via.placeholder.com/300x400?text=Rocket+League",
+    },
   ];
 
   const renderGames = games || defaultGames;
@@ -40,7 +72,7 @@ export function GameCard(games = null) {
   return renderGames
     .map(
       (game) => `
-    <div class="col">
+    <div class="col-sm-12 col-md-6 col-lg-4 col-xl-3">
       <div class="card h-100 shadow-sm">
         <img
           src="${game.image}"
