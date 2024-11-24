@@ -76,15 +76,16 @@ body {
 
 /* Contenedor principal */
 .container {
-  padding: 50px;
+  padding: 0;
   margin-left: 200px;
 }
 
 .row {
   display: flex;
-  justify-content: space-between; /* Distribuye espacio uniforme entre las tarjetas */
+  justify-content: flex-start; /* Distribuye espacio uniforme entre las tarjetas */
   flex-wrap: wrap; /* Permite que las tarjetas se ajusten al ancho de la pantalla */
-  margin: 0 auto; /* Centra el contenido de la fila */
+  margin-top: 5%; /* Centra el contenido de la fila */
+  margin-left: 1%;
 }
 
 /* Estilos de las tarjetas de juego */
@@ -94,9 +95,11 @@ body {
   border-radius: 6px;
   transition: transform 0.2s ease-in-out;
   height: 360px; /* Aumenta la altura para dar espacio al botón */
+  width: 260px; /* Ajusta el ancho de las tarjetas */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  gap: 10px;
 }
 .card img {
   height: 240px; /* Ajusta la altura de la imagen */

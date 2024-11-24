@@ -27,14 +27,6 @@
         >
           Agregar Juego
         </button>
-        <button
-          id="sortGamesBtn"
-          class="btn btn-success me-2"
-          data-bs-toggle="modal"
-          data-bs-target="#sortGamesModal"
-        >
-          Ordenar Juegos
-        </button>
         <div class="inputbox">
           <input required="required" type="text" />
           <span>Search</span>
@@ -104,43 +96,26 @@
                   required
                 />
               </div>
-              <button type="submit" class="btn btn-primary">Agregar</button>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Modal para ordenar juegos -->
-    <div
-      class="modal fade"
-      id="sortGamesModal"
-      tabindex="-1"
-      aria-labelledby="sortGamesModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="sortGamesModalLabel">Ordenar Juegos</h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <form id="sortGamesForm">
               <div class="mb-3">
-                <label for="sortOption" class="form-label">Ordenar por</label>
-                <select class="form-select" id="sortOption">
-                  <option value="title">Título</option>
-                  <option value="price">Precio</option>
-                  <option value="platform">Plataforma</option>
-                </select>
+                <label for="gameCategory" class="form-label">Categorías</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="gameCategory"
+                  placeholder="Separar por comas"
+                  required
+                />
               </div>
-              <button type="submit" class="btn btn-primary">Ordenar</button>
+              <div class="mb-3">
+                <label for="gameImage" class="form-label">URL de Imagen</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="gameImage"
+                  required
+                />
+              </div>
+              <button type="submit" class="btn btn-primary">Agregar</button>
             </form>
           </div>
         </div>
@@ -187,6 +162,17 @@
                 />
               </div>
               <div class="mb-3">
+                <label for="editGameCategory" class="form-label"
+                  >Categoría</label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  id="editGameCategory"
+                  required
+                />
+              </div>
+              <div class="mb-3">
                 <label for="editGamePlatform" class="form-label"
                   >Plataforma</label
                 >
@@ -194,6 +180,17 @@
                   type="text"
                   class="form-control"
                   id="editGamePlatform"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label for="editGameImage" class="form-label"
+                  >URL de la Imagen</label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  id="editGameImage"
                   required
                 />
               </div>
