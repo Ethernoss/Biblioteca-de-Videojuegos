@@ -1,4 +1,4 @@
-import { Dashboard } from "./pages/Dashboard.js";
+import { Dashboard } from "./pages/dashboard.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   console.log("DOM cargado correctamente");

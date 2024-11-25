@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+    <link rel="stylesheet" href="../../src/styles/styleslogin.css" />
+  </head>
+  <body>
+    <!-- Navbar transparente -->
+    <nav class="navbar">
+      <div class="navbar-buttons">
+        <button class="navbar-btn">Sign In</button>
+        <button class="navbar-btn" onclick="openModal('register')">
+          Register
+        </button>
+      </div>
+    </nav>
+
+    <main>
+      <!-- Contenedor de Login -->
+      <div class="login-container" id="loginContainer">
+        <h1>Welcome back!</h1>
+        <form>
+          <input
+            type="text"
+            placeholder="Usuario"
+            class="input-field"
+            required
+          />
+          <input
+            type="password"
+            placeholder="Contraseña"
+            class="input-field"
+            required
+          />
+          <button type="submit" class="shadow__btn">Entrar</button>
+        </form>
+        <p>
+          ¿No tienes una cuenta?
+          <span class="register-link" onclick="openModal('register')"
+            >Regístrate aquí</span
+          >
+        </p>
+      </div>
+
+      <!-- Modal de Registro -->
+      <div class="modal" id="registerModal">
+        <div class="modal-content">
+          <span class="close-btn" onclick="closeModal('register')"
+            >&times;</span
+          >
+          <h1>Regístrate</h1>
+          <form>
+            <input
+              type="text"
+              placeholder="Usuario"
+              class="input-field"
+              required
+            />
+            <input
+              type="email"
+              placeholder="Correo Electrónico"
+              class="input-field"
+              required
+            />
+            <input
+              type="password"
+              placeholder="Contraseña"
+              class="input-field"
+              required
+            />
+            <input
+              type="password"
+              placeholder="Confirmar Contraseña"
+              class="input-field"
+              required
+            />
+            <button type="submit" class="shadow__btn">Registrar</button>
+          </form>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      // Abrir el modal
+      function openModal(modalType) {
+        const loginContainer = document.getElementById("loginContainer");
+        const registerModal = document.getElementById("registerModal");
+
+        if (modalType === "register") {
+          // Ocultar el modal de login
+          loginContainer.style.display = "none";
+          // Mostrar el modal de registro
+          registerModal.style.display = "flex"; // Cambiar a flex para centrarlo
+        }
+      }
+
+      // Cerrar el modal
+      function closeModal(modalType) {
+        const loginContainer = document.getElementById("loginContainer");
+        const registerModal = document.getElementById("registerModal");
+
+        if (modalType === "register") {
+          // Mostrar de nuevo el modal de login y cerrar el de registro
+          loginContainer.style.display = "block";
+          registerModal.style.display = "none";
+        }
+      }
+
+      // Cerrar modal si se hace clic fuera de él
+      window.onclick = function (event) {
+        const registerModal = document.getElementById("registerModal");
+        if (event.target === registerModal) {
+          closeModal("register");
+        }
+      };
+    </script>
+  </body>
+</html>

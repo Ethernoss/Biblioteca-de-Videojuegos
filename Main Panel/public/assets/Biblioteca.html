@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Game Library</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../../src/styles/styleslibrary.css" />
+  </head>
+  <body class="bg-dark text-white">
+    <!-- Navbar Superior -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">Steam 2</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="#">STORE</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="#">LIBRARY</a>
+            </li>
+          </ul>
+          <div class="inputbox">
+            <input required="required" type="text" />
+            <span>Search</span>
+            <i></i>
+          </div>
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" href="#">USER</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row">
+        <!-- Barra lateral -->
+        <nav class="col-md-3 col-lg-2 sidebar p-3">
+          <h5 class="text-light mb-4">Library</h5>
+          <ul class="nav flex-column">
+            <li class="nav-item d-flex align-items-center mb-2">
+              <img
+                src="Images/apex-legends-transparent-picture-20.png"
+                alt="Icono Apex"
+                class="me-2"
+              />
+              <a class="nav-link text-white" href="#">Apex Legends</a>
+            </li>
+            <li class="nav-item d-flex align-items-center mb-2">
+              <img src="Images/256x256.png" alt="Icono FC5" class="me-2" />
+              <a class="nav-link text-white" href="#">Far cry 5</a>
+            </li>
+            <li class="nav-item d-flex align-items-center mb-2">
+              <img
+                src="Images/call-of-duty-2023-logo-918F9E426C-seeklogo.com.png"
+                alt="Icono Call of Duty"
+                class="me-2"
+              />
+              <a class="nav-link text-white" href="#">Call of Duty</a>
+            </li>
+            <li class="nav-item d-flex align-items-center mb-2">
+              <img
+                src="Images/assassin-s-creed-unity-assassin-s-creed-iii-assassin-s-creed-syndicate-png-favpng-D1kLXS2MHB4KeLYwMWbx5z8nX.jpg"
+                alt="Icono unity"
+                class="me-2"
+              />
+              <a class="nav-link text-white" href="#">Assassin's Creed Unity</a>
+            </li>
+            <li class="nav-item d-flex align-items-center mb-2">
+              <img
+                src="Images/png-transparent-assassin-s-creed-iv-black-flag-assassin-s-creed-iii-assassin-s-creed-origins-assassin-s-creed-syndicate-assassin-s-creed-brotherhood-others-thumbnail.png"
+                alt="Icono bf"
+                class="me-2"
+              />
+              <a class="nav-link text-white" href="#"
+                >Assassin's Creed IV Black Flag</a
+              >
+            </li>
+            <li class="nav-item d-flex align-items-center mb-2">
+              <img
+                src="Images/8f457d829087893dea31a66a649e428a.jpg"
+                alt="Icono gta"
+                class="me-2"
+              />
+              <a class="nav-link text-white" href="#">Grand Theft Auto V</a>
+            </li>
+            <li class="nav-item d-flex align-items-center mb-2">
+              <img
+                src="Images/8efb100a295c0c690931222ff4467bb8.png"
+                alt="Icono lf2"
+                class="me-2"
+              />
+              <a class="nav-link text-white" href="#">Left 4 Dead 2</a>
+            </li>
+            <li class="nav-item d-flex align-items-center mb-2">
+              <img src="Images/download.jpeg" alt="Icono phasmo" class="me-2" />
+              <a class="nav-link text-white" href="#">Phasmophobia</a>
+            </li>
+            <li class="nav-item d-flex align-items-center mb-2">
+              <img
+                src="https://cdn2.steamgriddb.com/icon/e1bd06c3f8089e7552aa0552cb387c92/32/512x512.png"
+                alt="Icono cs2"
+                class="me-2"
+              />
+              <a class="nav-link text-white" href="#">Counter Strike 2</a>
+            </li>
+            <li class="nav-item d-flex align-items-center mb-2">
+              <img
+                src="https://upload.wikimedia.org/wikipedia/ru/a/af/Valve_Deadlock_icon.png"
+                alt="Icono deadlock"
+                class="me-2"
+              />
+              <a class="nav-link text-white" href="#">Deadlock</a>
+            </li>
+          </ul>
+        </nav>
+
+        <!-- Contenido Principal -->
+        <main class="col-md-9 col-lg-10 px-4">
+          <!-- Encabezado con Filtros -->
+          <header
+            class="d-flex justify-content-between align-items-center my-3"
+          >
+            <h4 class="text-light mb-0">Todos los juegos (10)</h4>
+            <div class="d-flex gap-2">
+              <button class="shadow__btn">Ordenar por: Alfabético</button>
+              <button class="shadow__btn">Filtrar</button>
+            </div>
+          </header>
+
+          <!-- Grilla de Juegos -->
+          <div class="row">
+            <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
+              <div class="card">
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/en/d/db/Apex_legends_cover.jpg"
+                  class="card-img-top"
+                  alt="Juego 1"
+                />
+                <div class="card-body">
+                  <h6 class="card-title text-center">Apex Legends</h6>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
+              <div class="card">
+                <img
+                  src="https://image.api.playstation.com/cdn/EP0001/CUSA05847_00/pEBJnRh6DeL2BfyZRa9jZRrNuSav42QPJIXyqo6Rgcr52o9kYLwY4EpouAzWh4Fu.png"
+                  class="card-img-top"
+                  alt="Juego 2"
+                />
+                <div class="card-body">
+                  <h6 class="card-title text-center">Far cry 5</h6>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
+              <div class="card">
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/en/c/c9/Call_of_Duty_Black_Ops_6_Key_Art.png"
+                  class="card-img-top"
+                  alt="Juego 3"
+                />
+                <div class="card-body">
+                  <h6 class="card-title text-center">Call of Duty</h6>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
+              <div class="card">
+                <img
+                  src="https://cdn1.epicgames.com/offer/72bdc702b4974024a69a5eb718a7a135/ACUnityStandardPortrait_1200x1600-9b1ee825bd7c781dfca625f60d5db91a"
+                  class="card-img-top"
+                  alt="Juego 2"
+                />
+                <div class="card-body">
+                  <h6 class="card-title text-center">Assassin's Creed Unity</h6>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
+              <div class="card">
+                <img
+                  src="https://cdn2.steamgriddb.com/grid/ad103c7240e2913f0af4f4cc0a844ae5.png"
+                  class="card-img-top"
+                  alt="Juego 2"
+                />
+                <div class="card-body">
+                  <h6 class="card-title text-center">
+                    Assassin's Creed IV Black Flag
+                  </h6>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
+              <div class="card">
+                <img
+                  src="https://oyster.ignimgs.com/wordpress/stg.ign.com/2013/04/BG2SpcKCEAEeLeb.jpg"
+                  class="card-img-top"
+                  alt="Juego 2"
+                />
+                <div class="card-body">
+                  <h6 class="card-title text-center">Grand Theft Auto V</h6>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
+              <div class="card">
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/en/b/ba/Left4Dead2.jpg"
+                  class="card-img-top"
+                  alt="Juego 2"
+                />
+                <div class="card-body">
+                  <h6 class="card-title text-center">Left 4 Dead 2</h6>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
+              <div class="card">
+                <img
+                  src="https://anewgameplus.com/wp-content/uploads/2020/10/phasmophobia-cover.jpg"
+                  class="card-img-top"
+                  alt="Juego 2"
+                />
+                <div class="card-body">
+                  <h6 class="card-title text-center">Phasmophobia</h6>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
+              <div class="card">
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/en/thumb/f/f2/CS2_Cover_Art.jpg/220px-CS2_Cover_Art.jpg"
+                  class="card-img-top"
+                  alt="Juego 2"
+                />
+                <div class="card-body">
+                  <h6 class="card-title text-center">Counter Strike 2</h6>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
+              <div class="card">
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/en/3/3d/Deadlock_early_development_cover.jpg"
+                  class="card-img-top"
+                  alt="Juego 2"
+                />
+                <div class="card-body">
+                  <h6 class="card-title text-center" color="white">Deadlock</h6>
+                </div>
+              </div>
+            </div>
+            <!-- Más tarjetas de juegos -->
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
