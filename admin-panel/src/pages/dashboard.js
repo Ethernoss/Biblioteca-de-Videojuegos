@@ -5,7 +5,6 @@ export async function Dashboard(category = "All") {
 
   try {
     // Obtén todos los juegos desde la API
-    console.log("Realizando solicitud a /api/games...");
     const response = await fetch("/api/games");
     console.log("Respuesta del servidor:", response);
 
@@ -14,7 +13,6 @@ export async function Dashboard(category = "All") {
     }
 
     const games = await response.json(); // Lee la respuesta como JSON
-    console.log("Juegos obtenidos desde MongoDB:", games); // Log para depuración
 
     // Valida que games sea un array antes de proceder
     if (!Array.isArray(games)) {

@@ -50,7 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const newGame = {
       title: document.getElementById("gameTitle").value,
       price: parseFloat(document.getElementById("gamePrice").value),
-      platform: document.getElementById("gamePlatform").value,
+      description: document.getElementById("gameDescription").value,
       category: document
         .getElementById("gameCategory")
         .value.split(",")
@@ -100,7 +100,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const updatedGame = {
         title: document.getElementById("editGameTitle").value,
         price: parseFloat(document.getElementById("editGamePrice").value),
-        platform: document.getElementById("editGamePlatform").value,
+        description: document.getElementById("editGameDescription").value,
         category: document
           .getElementById("editGameCategory")
           .value.split(",")
@@ -155,7 +155,8 @@ document.addEventListener("DOMContentLoaded", () => {
           document.getElementById("editGamePrice").value = game.price;
           document.getElementById("editGameCategory").value =
             game.category.join(", "); // Convertir array a string
-          document.getElementById("editGamePlatform").value = game.platform;
+          document.getElementById("editGameDescription").value =
+            game.description;
           document.getElementById("editGameImage").value = game.image;
 
           // Guardar el ID del juego en el dataset del formulario

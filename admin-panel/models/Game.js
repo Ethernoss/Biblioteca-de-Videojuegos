@@ -9,12 +9,12 @@ const gameSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  platform: {
+  description: {
     type: String,
     required: true,
   },
   category: {
-    type: [String], // Asegúrate de que sea un array si tus datos están almacenados como un array
+    type: [String],
     required: true,
   },
   image: {
@@ -24,6 +24,6 @@ const gameSchema = new mongoose.Schema({
 });
 
 // Indica explícitamente el nombre de la colección si es necesario
-const Game = mongoose.model("mygames", gameSchema); // Cambia "ourgames" si tu colección tiene otro nombre
+const Game = mongoose.model("mygames", gameSchema);
 
 module.exports = Game;

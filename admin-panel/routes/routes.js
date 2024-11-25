@@ -7,8 +7,6 @@ const router = express.Router();
 router.get("/", async (req, res) => {
   try {
     const games = await Game.find({}); // Consulta todos los juegos en MongoDB
-    console.log("Datos obtenidos directamente desde MongoDB:", games);
-    console.log(typeof games);
     res.json(games);
   } catch (error) {
     console.error("Error al obtener los juegos:", error.message);
@@ -16,27 +14,16 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.get("/test", async (req, res) => {
-  try {
-    const games = await Game.find();
-    console.log("Prueba de datos:", games);
-    res.json(games);
-  } catch (error) {
-    console.error("Error al obtener datos en /test:", error.message);
-    res.status(500).json({ error: error.message });
-  }
-});
-
 router.post("/", async (req, res) => {
   try {
     console.log("Datos recibidos en el servidor:", req.body);
 
-    const { title, price, platform, category, image } = req.body;
+    const { title, price, description, category, image } = req.body;
 
     const newGame = new Game({
       title,
       price,
-      platform,
+      description,
       category,
       image,
     });
