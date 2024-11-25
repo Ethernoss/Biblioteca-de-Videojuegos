@@ -29,7 +29,7 @@ app.use("/src", express.static(path.join(__dirname, "src")));
 app.use("/api/games", gameRoutes); // Todas las rutas de la API estarán bajo /api/games
 
 // Ruta principal que apunta a "admin.html"
-app.get("/", (req, res) => {
+app.get("/admin", (req, res) => {
   res.sendFile(path.join(__dirname, "public/assets/admin.html"));
 });
 
