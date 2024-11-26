@@ -137,7 +137,7 @@
       // Función para cargar todos los juegos cuando se abre la página
       const loadAllGames = async () => {
         try {
-          const response = await fetch("http://localhost:3000/games");  // Endpoint para obtener todos los juegos
+          const response = await fetch("http://localhost:3000/api/games/games");  // Endpoint para obtener todos los juegos
           if (!response.ok) throw new Error("Error al obtener los juegos");
   
           const games = await response.json();
@@ -175,7 +175,7 @@
   
         if (selectedCategory) {
           try {
-            const response = await fetch("http://localhost:3000/categories", {
+            const response = await fetch("http://localhost:3000/api/games/categories", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json"

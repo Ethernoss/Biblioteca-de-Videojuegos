@@ -30,37 +30,14 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, "Main Panel/public")));
 app.use("/src", express.static(path.join(__dirname, "Main Panel/src")));
 
+// Rutas de la API
+app.use("/api/games", gameRoutes); // Todas las rutas de la API estarán bajo /api/games
+
 // Ruta principal que redirige al login
 app.get("/", (req, res) => {
   res.redirect("/login");
 });
 
-// Ruta principal que apunta a "admin.html"
-app.get("/admin", (req, res) => {
-  res.sendFile(path.join(__dirname, "Main Panel/public/assets/admin.html"));
-});
-
-// Ruta para la biblioteca del usuario
-app.get("/library", (req, res) => {
-  res.sendFile(
-    path.join(__dirname, "Main Panel/public/assets/Biblioteca.html")
-  );
-});
-
-// Ruta para la tienda
-app.get("/store", (req, res) => {
-  res.sendFile(path.join(__dirname, "Main Panel/public/assets/Tienda.html"));
-});
-
-app.get("/api/test", (req, res) => {
-  res.send("API funcionando correctamente");
-});
-
-// Ruta para el login
-app.get("/login", (req, res) => {
-  res.sendFile(path.join(__dirname, "Main Panel/public/assets/login.html"));
-});
-app.use(gameRoutes);
 // Rutas de Stripe
 const YOUR_DOMAIN = "http://localhost:3000";
 
@@ -95,8 +72,15 @@ app.post("/create-checkout-session", async (req, res) => {
 app.get("/session-status", async (req, res) => {
   const sessionId = req.query.session_id;
 
+  if (!sessionId) {
+    return res.status(400).json({ error: "session_id es requerido." });
+  }
+
+  console.log("Recuperando estado de sesión para ID:", sessionId);
+
   try {
     const session = await stripe.checkout.sessions.retrieve(sessionId);
+    console.log("Sesión recuperada:", session);
 
     res.send({
       status: session.payment_status,
@@ -110,6 +94,23 @@ app.get("/session-status", async (req, res) => {
   }
 });
 
+
+// Ruta principal que apunta a "admin.html"
+app.get("/admin", (req, res) => {
+  res.sendFile(path.join(__dirname, "Main Panel/public/assets/admin.html"));
+});
+
+// Ruta para la biblioteca del usuario
+app.get("/library", (req, res) => {
+  res.sendFile(
+    path.join(__dirname, "Main Panel/public/assets/Biblioteca.html")
+  );
+});
+
+// Ruta para la tienda
+app.get("/store", (req, res) => {
+  res.sendFile(path.join(__dirname, "Main Panel/public/assets/Tienda.html"));
+});
 
 // Iniciar el servidor
 app.listen(PORT, () => {

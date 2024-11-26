@@ -5,7 +5,7 @@ const User = require("../models/user.js");
 
 const router = express.Router();
 
-router.get("/categories", async (req, res) => {
+router.post("/categories", async (req, res) => {
   try {
     const {data} = req.body;
     console.log(data);
