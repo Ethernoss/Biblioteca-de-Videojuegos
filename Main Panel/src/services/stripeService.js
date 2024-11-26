@@ -1,7 +1,7 @@
-const Modal = bootstrap.Modal;
-
 export function initializeStripeService() {
   const compraModal = new bootstrap.Modal(document.getElementById("compraModal"));
+  const confirmPaymentBtn = document.getElementById("confirmPaymentBtn");
+  const modalFooter = document.querySelector(".modal-footer");
   let selectedPriceId = "";
 
   // Manejar el clic en el botón "Comprar"
@@ -15,12 +15,15 @@ export function initializeStripeService() {
       document.getElementById("gameTitle").textContent = `Juego: ${gameTitle}`;
       document.getElementById("gamePrice").textContent = `Precio: $${gamePrice}`;
 
+      // Mostrar los botones del modal
+      modalFooter.classList.remove("d-none");
+
       // Muestra el modal
       compraModal.show();
     }
   });
 
-  document.getElementById("confirmPaymentBtn").addEventListener("click", async () => {
+  confirmPaymentBtn.addEventListener("click", async () => {
     try {
       // Ocultar información del juego y mostrar estado de procesamiento
       document.getElementById("gameInfo").classList.add("d-none");
@@ -31,7 +34,7 @@ export function initializeStripeService() {
       const response = await fetch("http://localhost:3000/create-checkout-session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ priceId: selectedPriceId }), // selectedPriceId es el ID del precio del juego
+        body: JSON.stringify({ priceId: selectedPriceId }),
       });
 
       if (!response.ok) {
@@ -61,27 +64,23 @@ export function initializeStripeService() {
   const sessionId = urlParams.get("session_id");
 
   if (sessionId) {
-    console.log("Verificando estado de sesión con ID:", sessionId);
     fetch(`http://localhost:3000/session-status?session_id=${sessionId}`)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Error al obtener el estado de la sesión.");
-        }
-        return response.json();
-      })
+      .then((response) => response.json())
       .then((session) => {
-        console.log("Estado de la sesión:", session);
         compraModal.show();
         document.getElementById("gameInfo").classList.add("d-none");
         document.getElementById("paymentStatus").classList.remove("d-none");
 
-        if (session.status === "paid") { // Cambiar de "complete" a "paid"
-            document.getElementById("paymentMessage").textContent =
-              `Pago completado con éxito. Un correo ha sido enviado a ${session.customer_email}`;
-          } else {
-            document.getElementById("paymentMessage").textContent =
-              "El pago no se completó. Intenta nuevamente.";
-          }          
+        // Ocultar los botones del modal
+        modalFooter.classList.add("d-none");
+
+        if (session.status === "paid") {
+          document.getElementById("paymentMessage").textContent =
+            `Pago completado con éxito. Un correo ha sido enviado a ${session.customer_email}`;
+        } else {
+          document.getElementById("paymentMessage").textContent =
+            "El pago no se completó. Intenta nuevamente.";
+        }
       })
       .catch((error) => {
         console.error("Error verificando el estado del pago:", error);
