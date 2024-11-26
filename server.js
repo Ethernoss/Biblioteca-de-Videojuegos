@@ -26,7 +26,6 @@ connectDB(); // Llama a la conexión desde db.js
 
 // Middleware para parsear JSON
 app.use(express.json());
-
 // Servir archivos estáticos desde "public"
 app.use(express.static(path.join(__dirname, "Main Panel/public")));
 app.use("/src", express.static(path.join(__dirname, "Main Panel/src")));
@@ -36,11 +35,32 @@ app.get("/", (req, res) => {
   res.redirect("/login");
 });
 
+// Ruta principal que apunta a "admin.html"
+app.get("/admin", (req, res) => {
+  res.sendFile(path.join(__dirname, "Main Panel/public/assets/admin.html"));
+});
+
+// Ruta para la biblioteca del usuario
+app.get("/library", (req, res) => {
+  res.sendFile(
+    path.join(__dirname, "Main Panel/public/assets/Biblioteca.html")
+  );
+});
+
+// Ruta para la tienda
+app.get("/store", (req, res) => {
+  res.sendFile(path.join(__dirname, "Main Panel/public/assets/Tienda.html"));
+});
+
+app.get("/api/test", (req, res) => {
+  res.send("API funcionando correctamente");
+});
+
 // Ruta para el login
 app.get("/login", (req, res) => {
   res.sendFile(path.join(__dirname, "Main Panel/public/assets/login.html"));
 });
-
+app.use(gameRoutes);
 // Rutas de Stripe
 const YOUR_DOMAIN = "http://localhost:3000";
 
@@ -90,26 +110,6 @@ app.get("/session-status", async (req, res) => {
   }
 });
 
-// Ruta principal que apunta a "admin.html"
-app.get("/admin", (req, res) => {
-  res.sendFile(path.join(__dirname, "Main Panel/public/assets/admin.html"));
-});
-
-// Ruta para la biblioteca del usuario
-app.get("/library", (req, res) => {
-  res.sendFile(
-    path.join(__dirname, "Main Panel/public/assets/Biblioteca.html")
-  );
-});
-
-// Ruta para la tienda
-app.get("/store", (req, res) => {
-  res.sendFile(path.join(__dirname, "Main Panel/public/assets/Tienda.html"));
-});
-
-app.get("/api/test", (req, res) => {
-  res.send("API funcionando correctamente");
-});
 
 // Iniciar el servidor
 app.listen(PORT, () => {

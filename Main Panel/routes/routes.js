@@ -5,6 +5,30 @@ const User = require("../models/user.js");
 
 const router = express.Router();
 
+router.get("/categories", async (req, res) => {
+  try {
+    const {data} = req.body;
+    console.log(data);
+    const categories = await Game.find({category: { $in: data}});
+    res.json(categories);
+  } catch (error) {
+    console.error("Error al obtener las categorías:", error.message);
+    res.status(500).json({ message: "Error al obtener las categorías" });
+  }
+});
+
+router.get("/games", async (req, res) => {
+  try {
+    // Obtiene todos los juegos de la base de datos
+    const games = await Game.find({});
+    // Responde con los juegos
+    res.json(games);
+  } catch (error) {
+    console.error("Error al obtener los juegos:", error.message);
+    res.status(500).json({ message: "Error al obtener los juegos" });
+  }
+});
+
 // Listar todos los juegos
 router.get("/", async (req, res) => {
   try {
@@ -138,5 +162,7 @@ router.delete("/:id", async (req, res) => {
     res.status(400).json({ message: "Error al eliminar el juego" });
   }
 });
+
+
 
 module.exports = router;
