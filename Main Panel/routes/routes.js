@@ -7,9 +7,9 @@ const router = express.Router();
 
 router.post("/categories", async (req, res) => {
   try {
-    const {data} = req.body;
+    const { data } = req.body;
     console.log(data);
-    const categories = await Game.find({category: { $in: data}});
+    const categories = await Game.find({ category: { $in: data } });
     res.json(categories);
   } catch (error) {
     console.error("Error al obtener las categorías:", error.message);
@@ -100,6 +100,18 @@ router.post("/login", async (req, res) => {
   }
 });
 
+// Cerrar sesión
+router.post("/logout", (req, res) => {
+  try {
+    // Si estás usando cookies para la sesión, las eliminamos
+    res.clearCookie("sessionToken"); // Asegúrate de que sea el nombre de tu cookie de sesión
+    res.status(200).json({ message: "Sesión cerrada exitosamente" });
+  } catch (error) {
+    console.error("Error al cerrar sesión:", error.message);
+    res.status(500).json({ message: "Error al cerrar sesión" });
+  }
+});
+
 router.post("/", async (req, res) => {
   try {
     console.log("Datos recibidos en el servidor:", req.body);
@@ -162,7 +174,5 @@ router.delete("/:id", async (req, res) => {
     res.status(400).json({ message: "Error al eliminar el juego" });
   }
 });
-
-
 
 module.exports = router;
