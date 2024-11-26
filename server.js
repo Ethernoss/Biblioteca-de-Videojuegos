@@ -5,14 +5,19 @@ const dotenv = require("dotenv");
 const connectDB = require("./db.js"); // Importa la conexión desde db.js
 const gameRoutes = require("./Main Panel/routes/routes.js"); // Importa las rutas
 
+// Stripe setup
+const stripe = require("stripe")(
+  "sk_test_51QPCNnGAB1NMfz0pEaLpkGnWmhoeg9texZClV5m8cqjpqe5TkJtX2uK0LjYftfI3n5bM0gZdet09ugAho16i8mjc00jdPHsbgZ"
+);
+
 dotenv.config(); // Configuración del archivo .env
 
 const app = express();
 const PORT = 3000;
-
 app.use(
   cors({
-    methods: ["GET", "POST", "DELETE", "UPDATE", "PUT", "PATCH"],
+    origin: ["http://localhost:3000", "http://127.0.0.1:3000"], // Permitir ambos orígenes
+    methods: ["GET", "POST", "DELETE", "UPDATE", "PUT", "PATCH"], // Métodos permitidos
   })
 );
 
@@ -36,6 +41,55 @@ app.get("/login", (req, res) => {
   res.sendFile(path.join(__dirname, "Main Panel/public/assets/login.html"));
 });
 
+// Rutas de Stripe
+const YOUR_DOMAIN = "http://localhost:3000";
+
+app.post("/create-checkout-session", async (req, res) => {
+  const { priceId } = req.body; // Recibe el Price ID desde el frontend
+
+  if (!priceId) {
+    return res.status(400).json({ error: "Price ID es requerido." });
+  }
+
+  try {
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      line_items: [
+        {
+          price: priceId, // Aquí usa el Price ID para crear la sesión
+          quantity: 1,
+        },
+      ],
+      mode: "payment",
+      success_url: `${YOUR_DOMAIN}/store?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${YOUR_DOMAIN}/store?canceled=true`,
+    });
+
+    res.json({ sessionId: session.id });
+  } catch (error) {
+    console.error("Error creando la sesión de pago:", error.message);
+    res.status(500).json({ error: "Error creando la sesión de pago" });
+  }
+});
+
+app.get("/session-status", async (req, res) => {
+  const sessionId = req.query.session_id;
+
+  try {
+    const session = await stripe.checkout.sessions.retrieve(sessionId);
+
+    res.send({
+      status: session.payment_status,
+      customer_email: session.customer_details.email,
+    });
+  } catch (error) {
+    console.error("Error recuperando el estado de la sesión:", error.message);
+    res
+      .status(500)
+      .json({ error: "Error al recuperar el estado de la sesión" });
+  }
+});
+
 // Ruta principal que apunta a "admin.html"
 app.get("/admin", (req, res) => {
   res.sendFile(path.join(__dirname, "Main Panel/public/assets/admin.html"));
@@ -53,8 +107,9 @@ app.get("/store", (req, res) => {
   res.sendFile(path.join(__dirname, "Main Panel/public/assets/Tienda.html"));
 });
 
-// Rutas de la API
-app.use("/api/games", gameRoutes);
+app.get("/api/test", (req, res) => {
+  res.send("API funcionando correctamente");
+});
 
 // Iniciar el servidor
 app.listen(PORT, () => {

@@ -1,174 +1,60 @@
-/* Estilos Sidebar */
-.sidebar {
-  height: 100vh;
-  overflow-y: auto; /* Permite scroll solo en la barra lateral */
-  scrollbar-width: thin; /* Estilo para navegadores como Firefox */
-  scrollbar-color: #444 #111; /* Colores del scroll */
-  background-color : #111827;
-}
-
-.sidebar ul {
-  list-style: none; /* Elimina viñetas */
-  padding: 0; /* Sin relleno adicional */
-  margin: 0; /* Sin margen adicional */
-}
-
-.sidebar ul li {
-  margin: 3px 0; /* Reduce el espacio entre los elementos */
-  font-size: 0.9rem; /* Ajusta el tamaño del texto */
-}
-
-.sidebar .nav-link {
-  padding-left: 0; /* Alinear el texto sin sangría */
-}
-
-/* Estilos Navbar */
-.nav-link {
-  font-size: 0.9rem;
-}
-
-.navbar {
-  background-color : #111827;
-  box-shadow: 0.5px 0.5px 2px lightgray;
-}
-
-/* Estilos Generales */
-main {
-  height: 100vh;
-  overflow-y: auto;
-  padding-bottom: 1rem; /* Espacio para que no quede pegado al final */
-  scrollbar-width: thin; /* Estilo para navegadores como Firefox */
-  scrollbar-color: #444 #111; /* Colores del scroll */
-}
-
-img {
-  border-radius: 3px;
-}
-
-@media (max-width: 768px) {
-  .sidebar {
-      display: none;
-  }
-}
-
-html, body {
-  margin: 0;
-  padding: 0;
-  width: 100vw !important;
-  height: 100vh !important;
-  overflow-x: hidden;
-  background: rgb(0,212,255);
-  background: linear-gradient(90deg, rgba(0,212,255,1) 0%, rgba(9,9,121,1) 35%, rgba(2,0,36,1) 100%);
-}
-
 /* Estilos de las tarjetas de juego */
-.card {
-    background-color: black;
-    border: 1px solid black;
-    border-radius: 6px;
-    transition: transform 0.2s ease-in-out;
-    height: 360px; /* Aumenta la altura para dar espacio al botón */
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+.row {
+  justify-content: flex-start; /* Alinea las tarjetas a la izquierda */
+  gap: 10px; /* Reduce el espaciado entre las tarjetas */
 }
+
+.card {
+  background-color: black;
+  border: 1px solid black;
+  border-radius: 10px;
+  transition: transform 0.2s ease-in-out;
+  max-width: 440px; /* Limita el ancho máximo de las tarjetas */
+  flex: 1 1 calc(25% - 10px); /* Permite un máximo de 4 tarjetas por fila */
+  margin: 5px; /* Espaciado reducido entre tarjetas */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
 .card img {
-  height: 240px; /* Ajusta la altura de la imagen */
+  height: 180px; /* Ajusta la altura de la imagen */
   object-fit: cover; /* Mantiene la proporción de las imágenes */
-  border-radius: 8px;
+  border-radius: 10px 10px 0 0; /* Ajusta las esquinas superiores */
 }
 
 .card-title {
   font-size: 1rem;
   margin-top: 10px;
+  color: #00d1ff; /* Azul para resaltar títulos */
 }
 
 .card:hover {
-    transform: scale(1.05);
+  transform: scale(1.05);
 }
 
+.card p {
+  font-size: 0.85rem;
+  color: #ccc; /* Color más claro para los textos secundarios */
+}
+
+/* Botón "Comprar" con el estilo del botón "Editar" */
 .comprar-btn {
-  margin-top: 10px;
+  color: #0d6efd; /* Azul primario */
+  background-color: transparent; /* Fondo transparente */
+  border: 1px solid #0d6efd; /* Borde azul */
+  padding: 6px 12px; /* Tamaño del botón */
+  font-size: 0.875rem; /* Tamaño del texto */
+  border-radius: 5px; /* Bordes redondeados */
+  font-weight: 700; /* Texto en negrita */
+  text-transform: uppercase; /* Texto en mayúsculas */
+  cursor: pointer; /* Cursor tipo puntero */
+  transition: all 0.3s ease-in-out; /* Suaviza las transiciones */
 }
 
-/* Estilos de los botones y el input */
-  .shadow__btn {
-    padding: 10px 10px;
-    border: none;
-    font-size: 17px;
-    color: #fff;
-    border-radius: 7px;
-    letter-spacing: 4px;
-    font-weight: 700;
-    text-transform: uppercase;
-    transition: 0.5s;
-    transition-property: box-shadow;
-  }
-  
-  .shadow__btn {
-    background: rgb(0,140,255);
-    box-shadow: 0 0 25px rgb(0,140,255);
-  }
-  
-  .shadow__btn:hover {
-    box-shadow: 0 0 5px rgb(0,140,255),
-                0 0 25px rgb(0,140,255),
-                0 0 50px rgb(0,140,255),
-                0 0 100px rgb(0,140,255);
-  }
-  
-  .inputbox {
-    position: relative;
-    width: 196px;
-  }
-  
-  .inputbox input {
-    position: relative;
-    width: 100%;
-    padding: 20px 10px 10px;
-    background: transparent;
-    outline: none;
-    box-shadow: none;
-    border: none;
-    color: #fff;
-    font-size: 1em;
-    letter-spacing: 0.05em;
-    transition: 0.5s;
-    z-index: 10;
-  }
-  
-  .inputbox span {
-    position: absolute;
-    left: 0;
-    padding: 20px 10px 10px;
-    font-size: 1em;
-    color: #8f8f8f;
-    letter-spacing: 0.05em;
-    transition: 0.5s;
-    pointer-events: none;
-  }
-  
-  .inputbox input:valid ~span,
-  .inputbox input:focus ~span {
-    color: #45f3ff;
-    transform: translateX(-10px) translateY(-34px);
-    font-size: 0.75em;
-  }
-  
-  .inputbox i {
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    height: 2px;
-    background: #45f3ff;
-    border-radius: 4px;
-    transition: 0.5s;
-    pointer-events: none;
-    z-index: 9;
-  }
-  
-  .inputbox input:valid ~i,
-  .inputbox input:focus ~i {
-    height: 44px;
-  }
+.comprar-btn:hover {
+  background-color: #0d6efd; /* Fondo azul sólido al pasar el mouse */
+  color: #ffffff; /* Texto blanco al pasar el mouse */
+  transform: scale(1.05); /* Efecto de ampliación */
+}
+

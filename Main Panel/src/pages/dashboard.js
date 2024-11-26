@@ -5,7 +5,8 @@ export async function Dashboard(category = "All") {
 
   try {
     // Obtén todos los juegos desde la API
-    const response = await fetch("/api/games");
+    const response = await fetch("http://localhost:3000/api/games");
+
     console.log("Respuesta del servidor:", response);
 
     if (!response.ok) {
