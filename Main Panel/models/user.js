@@ -1,17 +1,11 @@
 const mongoose = require("mongoose");
 
-const librarySchema = new mongoose.Schema({
-  usuario: {
-    type: mongoose.Schema.Types.ObjectId, // Referencia a un usuario
-    ref: "User",
-    required: true,
-  },
-  juegos: [
-    {
-      type: mongoose.Schema.Types.ObjectId, // Referencias a juegos
-      ref: "Game",
-    },
-  ],
+const userSchema = new mongoose.Schema({
+  username: { type: String, required: true, unique: true },
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+  isAdmin: { type: Boolean, default: false },
 });
 
-module.exports = mongoose.model("Library", librarySchema);
+const User = mongoose.model("users", userSchema);
+module.exports = User;

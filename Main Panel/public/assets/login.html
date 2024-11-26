@@ -108,13 +108,87 @@
         }
       }
 
-      // Cerrar modal si se hace clic fuera de él
-      window.onclick = function (event) {
-        const registerModal = document.getElementById("registerModal");
-        if (event.target === registerModal) {
-          closeModal("register");
-        }
-      };
+      // Registro de usuario
+      document
+        .querySelector("#registerModal form")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const username = document.querySelector(
+            "#registerModal input[placeholder='Usuario']"
+          ).value;
+          const email = document.querySelector(
+            "#registerModal input[placeholder='Correo Electrónico']"
+          ).value;
+          const password = document.querySelector(
+            "#registerModal input[placeholder='Contraseña']"
+          ).value;
+          const confirmPassword = document.querySelector(
+            "#registerModal input[placeholder='Confirmar Contraseña']"
+          ).value;
+
+          if (password !== confirmPassword) {
+            alert("Las contraseñas no coinciden");
+            return;
+          }
+
+          try {
+            const response = await fetch("/api/games/register", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                username,
+                email,
+                password,
+                isAdmin: false,
+              }),
+            });
+
+            if (response.ok) {
+              alert("Usuario registrado exitosamente");
+              closeModal("register");
+            } else {
+              const { message } = await response.json();
+              alert(message);
+            }
+          } catch (error) {
+            alert("Error al registrar usuario");
+          }
+        });
+
+      // Login de usuario
+      document
+        .querySelector("#loginContainer form")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          // Cambiar 'email' por 'username' en el selector y nombre de variable
+          const username = document.querySelector(
+            "#loginContainer input[placeholder='Usuario']"
+          ).value;
+          const password = document.querySelector(
+            "#loginContainer input[placeholder='Contraseña']"
+          ).value;
+
+          try {
+            const response = await fetch("/api/games/login", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ username, password }), // Asegúrate de enviar 'username'
+            });
+
+            if (response.ok) {
+              const { message, redirect } = await response.json();
+              alert(message);
+              window.location.href = redirect;
+            } else {
+              const { message } = await response.json();
+              alert(message);
+            }
+          } catch (error) {
+            alert("Error al iniciar sesión");
+          }
+        });
     </script>
   </body>
 </html>

@@ -1,5 +1,7 @@
+const bcrypt = require("bcrypt");
 const express = require("express");
 const Game = require("../models/Game.js");
+const User = require("../models/user.js");
 
 const router = express.Router();
 
@@ -11,6 +13,66 @@ router.get("/", async (req, res) => {
   } catch (error) {
     console.error("Error al obtener los juegos:", error.message);
     res.status(500).json({ message: "Error al obtener los juegos" });
+  }
+});
+
+// Registro de usuario
+router.post("/register", async (req, res) => {
+  console.log("Datos recibidos en el servidor:", req.body);
+  try {
+    const { username, email, password, isAdmin } = req.body;
+
+    // Verificar si el usuario ya existe
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: "El usuario ya está registrado" });
+    }
+
+    // Hashear la contraseña
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Crear nuevo usuario
+    const newUser = new User({
+      username,
+      email,
+      password: hashedPassword,
+      isAdmin: isAdmin || false, // Por defecto, no es admin
+    });
+
+    await newUser.save();
+    res.status(201).json({ message: "Usuario registrado exitosamente" });
+  } catch (error) {
+    console.error("Error al registrar usuario:", error.message);
+    res.status(500).json({ message: "Error al registrar usuario" });
+  }
+});
+
+// Login de usuario
+router.post("/login", async (req, res) => {
+  try {
+    const { username, password } = req.body;
+
+    // Buscar usuario por email
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(400).json({ message: "Usuario no encontrado" });
+    }
+
+    // Verificar contraseña
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Contraseña incorrecta" });
+    }
+
+    // Redirigir según el rol del usuario
+    if (user.isAdmin) {
+      res.json({ message: "Admin autenticado", redirect: "/admin" });
+    } else {
+      res.json({ message: "Usuario autenticado", redirect: "/library" });
+    }
+  } catch (error) {
+    console.error("Error al iniciar sesión:", error.message);
+    res.status(500).json({ message: "Error al iniciar sesión" });
   }
 });
 
