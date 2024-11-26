@@ -61,20 +61,27 @@ export function initializeStripeService() {
   const sessionId = urlParams.get("session_id");
 
   if (sessionId) {
+    console.log("Verificando estado de sesión con ID:", sessionId);
     fetch(`http://localhost:3000/session-status?session_id=${sessionId}`)
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Error al obtener el estado de la sesión.");
+        }
+        return response.json();
+      })
       .then((session) => {
+        console.log("Estado de la sesión:", session);
         compraModal.show();
         document.getElementById("gameInfo").classList.add("d-none");
         document.getElementById("paymentStatus").classList.remove("d-none");
 
-        if (session.status === "complete") {
-          document.getElementById("paymentMessage").textContent =
-            `Pago completado con éxito. Un correo ha sido enviado a ${session.customer_email}`;
-        } else {
-          document.getElementById("paymentMessage").textContent =
-            "El pago no se completó. Intenta nuevamente.";
-        }
+        if (session.status === "paid") { // Cambiar de "complete" a "paid"
+            document.getElementById("paymentMessage").textContent =
+              `Pago completado con éxito. Un correo ha sido enviado a ${session.customer_email}`;
+          } else {
+            document.getElementById("paymentMessage").textContent =
+              "El pago no se completó. Intenta nuevamente.";
+          }          
       })
       .catch((error) => {
         console.error("Error verificando el estado del pago:", error);

@@ -78,8 +78,15 @@ app.post("/create-checkout-session", async (req, res) => {
 app.get("/session-status", async (req, res) => {
   const sessionId = req.query.session_id;
 
+  if (!sessionId) {
+    return res.status(400).json({ error: "session_id es requerido." });
+  }
+
+  console.log("Recuperando estado de sesión para ID:", sessionId);
+
   try {
     const session = await stripe.checkout.sessions.retrieve(sessionId);
+    console.log("Sesión recuperada:", session);
 
     res.send({
       status: session.payment_status,
@@ -92,6 +99,8 @@ app.get("/session-status", async (req, res) => {
       .json({ error: "Error al recuperar el estado de la sesión" });
   }
 });
+
+app.use("/api/games", gameRoutes);
 
 // Ruta principal que apunta a "admin.html"
 app.get("/admin", (req, res) => {
