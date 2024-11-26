@@ -31,6 +31,9 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, "Main Panel/public")));
 app.use("/src", express.static(path.join(__dirname, "Main Panel/src")));
 
+// Rutas de la API
+app.use("/api/games", gameRoutes); // Todas las rutas de la API estarán bajo /api/games
+
 // Ruta principal que redirige al login
 app.get("/", (req, res) => {
   res.redirect("/login");
@@ -38,7 +41,7 @@ app.get("/", (req, res) => {
 
 // Ruta para el login
 app.get("/login", (req, res) => {
-  res.sendFile(path.join(__dirname, "Main Panel/public/assets/login.html"));
+  res.sendFile(path.join(__dirname, "./Main Panel/public/assets/login.html"));
 });
 
 // Rutas de Stripe
@@ -105,10 +108,6 @@ app.get("/library", (req, res) => {
 // Ruta para la tienda
 app.get("/store", (req, res) => {
   res.sendFile(path.join(__dirname, "Main Panel/public/assets/Tienda.html"));
-});
-
-app.get("/api/test", (req, res) => {
-  res.send("API funcionando correctamente");
 });
 
 // Iniciar el servidor
