@@ -3,6 +3,7 @@ export function initializeStripeService() {
   const confirmPaymentBtn = document.getElementById("confirmPaymentBtn");
   const modalFooter = document.querySelector(".modal-footer");
   let selectedPriceId = "";
+  let selectedGameId = ""; // Define selectedGameId
 
   // Manejar el clic en el botón "Comprar"
   document.addEventListener("click", (event) => {
@@ -10,6 +11,7 @@ export function initializeStripeService() {
       const gameTitle = event.target.dataset.title;
       const gamePrice = event.target.dataset.price;
       selectedPriceId = event.target.dataset.priceId;
+      selectedGameId = event.target.dataset.gameId; // Captura el gameId del botón
 
       // Actualiza el contenido del modal con la información del juego
       document.getElementById("gameTitle").textContent = `Juego: ${gameTitle}`;
@@ -34,7 +36,7 @@ export function initializeStripeService() {
       const response = await fetch("http://localhost:3000/create-checkout-session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ priceId: selectedPriceId }),
+        body: JSON.stringify({ priceId: selectedPriceId, gameId: selectedGameId }), // Envía el gameId y priceId
       });
 
       if (!response.ok) {

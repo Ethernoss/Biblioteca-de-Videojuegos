@@ -5,6 +5,7 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   isAdmin: { type: Boolean, default: false },
+  library: { type: mongoose.Schema.Types.ObjectId, ref: "Library", required: true }, // Cambiado a `library`
 });
 
 const User = mongoose.model("users", userSchema);
