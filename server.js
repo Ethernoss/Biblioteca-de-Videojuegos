@@ -38,6 +38,11 @@ app.get("/", (req, res) => {
   res.redirect("/login");
 });
 
+// Ruta para el login
+app.get("/login", (req, res) => {
+  res.sendFile(path.join(__dirname, "./Main Panel/public/assets/login.html"));
+});
+
 // Rutas de Stripe
 const YOUR_DOMAIN = "http://localhost:3000";
 
@@ -93,7 +98,6 @@ app.get("/session-status", async (req, res) => {
       .json({ error: "Error al recuperar el estado de la sesión" });
   }
 });
-
 
 // Ruta principal que apunta a "admin.html"
 app.get("/admin", (req, res) => {
