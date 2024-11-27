@@ -16,6 +16,23 @@ router.get("/categories", async (req, res) => {
   }
 });
 
+router.post("/gamesCategories", async (req, res) => {
+  try {
+    const { data } = req.body;
+    // Obtiene todos los juegos de la base de datos que coincidan con las categorías
+    const games = await Game.find({ category: { $in: data } }); // No es necesario usar toArray()
+    
+    if (!games || games.length === 0) {
+      return res.status(404).json({ message: "Juegos no encontrados" });
+    }
+    // Responde con los juegos
+    res.json(games);
+  } catch (error) {
+    console.error("Error al obtener los juegos:", error.message);
+    res.status(500).json({ message: "Error al obtener los juegos" });
+  }
+});
+
 router.get("/games", async (req, res) => {
   try {
     // Obtiene todos los juegos de la base de datos
