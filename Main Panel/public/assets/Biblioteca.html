@@ -12,10 +12,18 @@
   </head>
   <body class="bg-dark text-white">
     <!-- Navbar Superior -->
-    <nav class="navbar navbar-expand-lg navbar-dark ">
+    <nav class="navbar navbar-expand-lg navbar-dark">
       <div class="container-fluid">
         <a class="navbar-brand">Steam 2</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
@@ -35,7 +43,7 @@
         </div>
       </div>
     </nav>
-  
+
     <div class="container-fluid">
       <div class="row">
         <!-- Barra lateral -->
@@ -89,18 +97,30 @@
             </li>
           </ul>
         </nav>
-  
+
         <!-- Contenido Principal -->
         <main class="col-md-9 col-lg-10 px-4">
           <!-- Encabezado con Filtros -->
-          <header class="d-flex justify-content-between align-items-center my-3">
+          <header
+            class="d-flex justify-content-between align-items-center my-3"
+          >
             <h4 class="text-light mb-0">Todos los juegos</h4>
             <div class="d-flex gap-2">
               <div class="dropdown">
-                <button class="btn btn-primary dropdown-toggle shadow__btn" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <button
+                  class="btn btn-primary dropdown-toggle shadow__btn"
+                  type="button"
+                  id="sortDropdown"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
                   Ordenar por:
                 </button>
-                <ul class="dropdown-menu dropdown-menu-dark" id="categoryDropdown" aria-labelledby="sortDropdown">
+                <ul
+                  class="dropdown-menu dropdown-menu-dark"
+                  id="categoryDropdown"
+                  aria-labelledby="sortDropdown"
+                >
                   <li><a class="dropdown-item">Action</a></li>
                   <li><a class="dropdown-item">Adventure</a></li>
                   <li><a class="dropdown-item">RPG</a></li>
@@ -120,11 +140,11 @@
               </div>
             </div>
           </header>
-  
-        <!-- Grilla de Juegos -->
-        <div id="gamesGrid" class="row">
-          <!-- Aquí se cargarán los juegos -->
-        </div>
+
+          <!-- Grilla de Juegos -->
+          <div id="gamesGrid" class="row">
+            <!-- Aquí se cargarán los juegos -->
+          </div>
         </main>
       </div>
     </div>
@@ -133,18 +153,18 @@
       const gamesGrid = document.getElementById("gamesGrid");
       const categoryDropdown = document.getElementById("categoryDropdown");
       const categoryList = document.getElementById("categoryList");
-  
+
       // Función para cargar todos los juegos cuando se abre la página
       const loadAllGames = async () => {
         try {
-          const response = await fetch("http://localhost:3000/api/games/games");  // Endpoint para obtener todos los juegos
+          const response = await fetch("http://localhost:3000/api/games/games"); // Endpoint para obtener todos los juegos
           if (!response.ok) throw new Error("Error al obtener los juegos");
-  
+
           const games = await response.json();
-          gamesGrid.innerHTML = ''; // Limpiar la grilla
-  
+          gamesGrid.innerHTML = ""; // Limpiar la grilla
+
           // Inserta los juegos en la grilla
-          games.forEach(game => {
+          games.forEach((game) => {
             const gameCard = `
               <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
                 <div class="card text-dark">
@@ -160,35 +180,39 @@
           });
         } catch (error) {
           console.error("Error al cargar los juegos:", error.message);
-          gamesGrid.innerHTML = "<p class='text-center text-danger'>Error al cargar los juegos.</p>";
+          gamesGrid.innerHTML =
+            "<p class='text-center text-danger'>Error al cargar los juegos.</p>";
         }
       };
-  
+
       // Cargar los juegos al abrir la ventana
       window.addEventListener("load", loadAllGames);
-  
+
       categoryDropdown.addEventListener("change", async () => {
         const selectedCategory = categoryDropdown.value;
-  
+
         // Limpia la grilla de juegos
         gamesGrid.innerHTML = "";
-  
+
         if (selectedCategory) {
           try {
-            const response = await fetch("http://localhost:3000/api/games/categories", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json"
-              },
-              body: JSON.stringify({ data: [selectedCategory] })
-            });
-  
+            const response = await fetch(
+              "http://localhost:3000/api/games/categories",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ data: [selectedCategory] }),
+              }
+            );
+
             if (!response.ok) throw new Error("Error al obtener los juegos");
-  
+
             const games = await response.json();
             console.log(games);
             // Inserta los juegos en el HTML
-            games.forEach(game => {
+            games.forEach((game) => {
               const gameCard = `
                 <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
                   <div class="card text-dark">
@@ -202,14 +226,50 @@
               `;
               gamesGrid.innerHTML += gameCard;
             });
-  
           } catch (error) {
             console.error("Error al cargar los juegos:", error.message);
-            gamesGrid.innerHTML = "<p class='text-center text-danger'>Error al cargar los juegos.</p>";
+            gamesGrid.innerHTML =
+              "<p class='text-center text-danger'>Error al cargar los juegos.</p>";
           }
         }
       });
     </script>
   </body>
-  </html>
-  
+</html>
+
+<!--  <script>
+      document.addEventListener("DOMContentLoaded", async () => {
+        const token = localStorage.getItem("token");
+        console.log("Token recuperado del localStorage:", token);
+
+        if (!token) {
+          alert("Acceso denegado. Por favor, inicia sesión.");
+          window.location.href = "/login";
+          return;
+        }
+
+        try {
+          const response = await fetch("http://localhost:3000/library", {
+            method: "GET",
+            headers: headers({
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            }),
+          });
+
+          console.log("Encabezados enviados:", {
+            Authorization: `Bearer ${token}`,
+          });
+
+          if (!response.ok) {
+            throw new Error("Acceso denegado. Por favor, inicia sesión.");
+          }
+
+          console.log("Acceso concedido a /library");
+        } catch (error) {
+          console.error("Error al acceder a /library:", error.message);
+          alert(error.message);
+          window.location.href = "/login";
+        }
+      });
+    </script> -->

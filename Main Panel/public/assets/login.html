@@ -180,8 +180,13 @@
             });
 
             if (response.ok) {
-              const { message, redirect } = await response.json();
+              const { message, redirect, token } = await response.json(); // Recibimos el token del servidor
               alert(message);
+
+              // Guardar el token en localStorage
+              localStorage.setItem("token", token);
+
+              // Redirigir al usuario según el rol
               window.location.href = redirect;
             } else {
               const { message } = await response.json();
