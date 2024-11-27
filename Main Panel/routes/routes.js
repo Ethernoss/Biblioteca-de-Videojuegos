@@ -1,4 +1,5 @@
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const express = require("express");
 const Game = require("../models/Game.js");
 const User = require("../models/user.js");
@@ -15,6 +16,22 @@ router.get("/categories", async (req, res) => {
   }
 });
 
+router.post("/gamesCategories", async (req, res) => {
+  try {
+    const { data } = req.body;
+    // Obtiene todos los juegos de la base de datos que coincidan con las categorías
+    const games = await Game.find({ category: { $in: data } }); // No es necesario usar toArray()
+    
+    if (!games || games.length === 0) {
+      return res.status(404).json({ message: "Juegos no encontrados" });
+    }
+    // Responde con los juegos
+    res.json(games);
+  } catch (error) {
+    console.error("Error al obtener los juegos:", error.message);
+    res.status(500).json({ message: "Error al obtener los juegos" });
+  }
+});
 
 router.get("/games", async (req, res) => {
   try {
@@ -75,24 +92,29 @@ router.post("/login", async (req, res) => {
   try {
     const { username, password } = req.body;
 
-    // Buscar usuario por email
     const user = await User.findOne({ username });
     if (!user) {
       return res.status(400).json({ message: "Usuario no encontrado" });
     }
 
-    // Verificar contraseña
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(400).json({ message: "Contraseña incorrecta" });
     }
 
-    // Redirigir según el rol del usuario
-    if (user.isAdmin) {
-      res.json({ message: "Admin autenticado", redirect: "/admin" });
-    } else {
-      res.json({ message: "Usuario autenticado", redirect: "/library" });
-    }
+    // Crear el token JWT
+    const token = jwt.sign(
+      { id: user._id, username: user.username, isAdmin: user.isAdmin },
+      process.env.JWT_SECRET
+    );
+
+    console.log("Token generado para usuario:", token); // LOG para verificar el token
+
+    res.json({
+      message: "Inicio de sesión exitoso",
+      token,
+      redirect: user.isAdmin ? "/admin" : "/library",
+    });
   } catch (error) {
     console.error("Error al iniciar sesión:", error.message);
     res.status(500).json({ message: "Error al iniciar sesión" });

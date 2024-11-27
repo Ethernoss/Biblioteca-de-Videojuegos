@@ -4,9 +4,13 @@ const path = require("path");
 const dotenv = require("dotenv");
 const connectDB = require("./db.js"); // Importa la conexión desde db.js
 const gameRoutes = require("./Main Panel/routes/routes.js"); // Importa las rutas
-const User = require('./Main Panel/models/user.js');
-const Library = require('./Main Panel/models/library.js');
+const User = require("./Main Panel/models/user.js");
+const Library = require("./Main Panel/models/library.js");
 
+/* const {
+  isAuthenticated,
+  isAdmin,
+} = require("./Main Panel/src/middlewares/authMiddleware.js");*/
 
 // Stripe setup
 const stripe = require("stripe")(
@@ -17,12 +21,7 @@ dotenv.config(); // Configuración del archivo .env
 
 const app = express();
 const PORT = 3000;
-app.use(
-  cors({
-    origin: ["http://localhost:3000", "http://127.0.0.1:3000"], // Permitir ambos orígenes
-    methods: ["GET", "POST", "DELETE", "UPDATE", "PUT", "PATCH"], // Métodos permitidos
-  })
-);
+app.use(cors());
 
 // Conexión a MongoDB
 connectDB(); // Llama a la conexión desde db.js
@@ -53,7 +52,9 @@ app.post("/create-checkout-session", async (req, res) => {
   const { priceId, gameId } = req.body; // Recibe también el ID del juego
 
   if (!priceId || !gameId) {
-    return res.status(400).json({ error: "Price ID y Game ID son requeridos." });
+    return res
+      .status(400)
+      .json({ error: "Price ID y Game ID son requeridos." });
   }
 
   try {
@@ -131,24 +132,27 @@ app.get("/session-status", async (req, res) => {
   }
 });
 
-
 // Ruta principal que apunta a "admin.html"
 app.get("/admin", (req, res) => {
   res.sendFile(path.join(__dirname, "Main Panel/public/assets/admin.html"));
 });
 
-// Ruta para la biblioteca del usuario
+// Ruta protegida para la biblioteca
 app.get("/library", (req, res) => {
   res.sendFile(
     path.join(__dirname, "Main Panel/public/assets/Biblioteca.html")
   );
 });
 
+app.get("/test", (req, res) => {
+  console.log("Authorization header en /test:", req.headers.authorization);
+  res.json({ header: req.headers.authorization });
+});
+
 // Ruta para la tienda
 app.get("/store", (req, res) => {
   res.sendFile(path.join(__dirname, "Main Panel/public/assets/Tienda.html"));
 });
-
 // Iniciar el servidor
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);
