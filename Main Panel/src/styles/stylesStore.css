@@ -1,7 +1,7 @@
 /* Estilos de las tarjetas de juego */
 .row {
-  justify-content: flex-start; /* Alinea las tarjetas a la izquierda */
-  gap: 10px; /* Reduce el espaciado entre las tarjetas */
+  margin: 0; /* Elimina márgenes */
+  justify-content: center; /* Centra las tarjetas si sobran espacios */
 }
 
 .card {
@@ -58,3 +58,7 @@
   transform: scale(1.05); /* Efecto de ampliación */
 }
 
+.card-body .comprar-btn {
+  display: inline-block; /* Asegura que sea tratado como botón */
+  margin: 0 auto; /* Centra el botón horizontalmente */
+}

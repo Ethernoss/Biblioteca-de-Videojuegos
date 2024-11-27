@@ -17,7 +17,7 @@ export function GameCardStore(games = []) {
   return games
     .map(
       (game) => `
-        <div class="col-sm-12 col-md-6 col-lg-4 col-xl-3">
+        <div class="col">
           <div class="card h-100 shadow-sm">
             <img
               src="${game.image}"
@@ -34,7 +34,7 @@ export function GameCardStore(games = []) {
                 data-title="${game.title}"
                 data-price="${game.price}"
                 data-price-id="${game.priceId}"
-                data-game-id="${game._id}" <!-- Incluye el gameId -->
+                data-game-id="${game._id}"
               >
                 Comprar
               </button>
@@ -45,4 +45,3 @@ export function GameCardStore(games = []) {
     )
     .join("");
 }
-

@@ -8,15 +8,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Obtener juegos y categorías desde el servicio
     const [games, categories] = await Promise.all([getGames(), getCategories()]);
 
-    // Renderizar juegos
+    // Función para renderizar los juegos
     const renderGames = (filteredGames) => {
       gameGrid.innerHTML = filteredGames
         .map(
           (game) => `
-        <div class="col">
+        <div class="col-sm-12 col-md-6 col-lg-4 col-xl-3">
           <div class="card h-100 bg-dark text-white">
             <img src="${game.image}" class="card-img-top" alt="${game.title}" />
-            <div class="card-body">
+            <div class="card-body text-center">
               <h5 class="card-title">${game.title}</h5>
               <p class="card-text">${game.description}</p>
               <p class="card-text">$${game.price}</p>
@@ -25,6 +25,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 data-title="${game.title}"
                 data-price="${game.price}"
                 data-price-id="${game.priceId}"
+                data-game-id="${game._id}"
               >
                 Comprar
               </button>
@@ -50,7 +51,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Mostrar todos los juegos por defecto
     renderGames(games);
 
-    // Filtrar juegos por categoría al hacer clic en el menú
+    // Manejo del clic en el filtro de categorías
     categoryFilter.addEventListener("click", (event) => {
       event.preventDefault();
       const category = event.target.getAttribute("data-category");
@@ -65,7 +66,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         renderGames(filteredGames);
       }
     });
+
+    // No manejes el evento "Comprar" aquí
+    // Deja que stripeService.js se encargue de eso
   } catch (error) {
     console.error("Error al cargar los juegos o categorías:", error);
+    alert("Error al cargar la tienda. Por favor, recarga la página.");
   }
 });
