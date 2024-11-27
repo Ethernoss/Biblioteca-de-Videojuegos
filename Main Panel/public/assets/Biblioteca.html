@@ -27,11 +27,28 @@
               <a class="nav-link active">LIBRARY</a>
             </li>
           </ul>
-          <ul class="navbar-nav">
-            <li class="nav-item">
-              <a class="nav-link">USER</a>
-            </li>
-          </ul>
+          <div class="dropdown">
+            <a
+              class="nav-link dropdown-toggle"
+              href="#"
+              role="button"
+              id="userDropdown"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              USER
+            </a>
+            <ul
+              class="dropdown-menu dropdown-menu-end"
+              aria-labelledby="userDropdown"
+            >
+              <li>
+                <button id="logoutBtn" class="dropdown-item">
+                  Cerrar sesión
+                </button>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     </nav>
@@ -145,19 +162,21 @@
   
           // Inserta los juegos en la grilla
           games.forEach(game => {
-            const gameCard = `
-              <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
-                <div class="card text-dark">
-                  <img src="${game.image}" class="card-img-top" alt="${game.title}">
-                  <div class="card-body">
-                    <h6 class="card-title text-center">${game.title}</h6>
-                    <p class="text-center">$${game.price}</p>
+              const gameCard = `
+                <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
+                  <div class="card text-dark">
+                    <img src="${game.image}" class="card-img-top" alt="${game.title}">
+                    <div class="card-body">
+                      <h6 class="card-title text-center">${game.title}</h6>
+                      <div class="d-grid mt-3">
+                        <button class="btn btn-primary btn-sm">Play</button>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            `;
-            gamesGrid.innerHTML += gameCard;
-          });
+              `;
+              gamesGrid.innerHTML += gameCard;
+            });
         } catch (error) {
           console.error("Error al cargar los juegos:", error.message);
           gamesGrid.innerHTML = "<p class='text-center text-danger'>Error al cargar los juegos.</p>";
@@ -195,13 +214,16 @@
                     <img src="${game.image}" class="card-img-top" alt="${game.title}">
                     <div class="card-body">
                       <h6 class="card-title text-center">${game.title}</h6>
-                      <p class="text-center">$${game.price}</p>
+                      <div class="d-grid mt-3">
+                        <button class="btn btn-primary btn-sm">Play</button>
+                      </div>
                     </div>
                   </div>
                 </div>
               `;
               gamesGrid.innerHTML += gameCard;
             });
+
   
           } catch (error) {
             console.error("Error al cargar los juegos:", error.message);
