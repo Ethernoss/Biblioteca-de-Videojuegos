@@ -37,7 +37,29 @@
           </ul>
           <ul class="navbar-nav">
             <li class="nav-item">
-              <a class="nav-link">USER</a>
+              <!-- Boton para cerrar sesión -->
+              <div class="dropdown">
+                <a
+                  class="nav-link dropdown-toggle"
+                  href="#"
+                  role="button"
+                  id="userDropdown"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  USER
+                </a>
+                <ul
+                  class="dropdown-menu dropdown-menu-end"
+                  aria-labelledby="userDropdown"
+                >
+                  <li>
+                    <button id="logoutBtn" class="dropdown-item">
+                      Cerrar sesión
+                    </button>
+                  </li>
+                </ul>
+              </div>
             </li>
           </ul>
         </div>
@@ -231,6 +253,30 @@
             gamesGrid.innerHTML =
               "<p class='text-center text-danger'>Error al cargar los juegos.</p>";
           }
+        }
+      });
+    </script>
+    <script>
+      // Botón de cerrar sesión
+      const logoutBtn = document.getElementById("logoutBtn");
+
+      logoutBtn.addEventListener("click", async () => {
+        try {
+          const response = await fetch("/api/games/logout", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+          });
+
+          if (response.ok) {
+            alert("Sesión cerrada exitosamente");
+            window.location.href = "/login"; // Redirige al login después de cerrar sesión
+          } else {
+            const { message } = await response.json();
+            alert(`Error: ${message}`);
+          }
+        } catch (error) {
+          console.error("Error al cerrar sesión:", error);
+          alert("Error al cerrar sesión");
         }
       });
     </script>
