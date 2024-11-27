@@ -5,17 +5,16 @@ const User = require("../models/user.js");
 
 const router = express.Router();
 
-router.post("/categories", async (req, res) => {
+router.get("/categories", async (req, res) => {
   try {
-    const { data } = req.body;
-    console.log(data);
-    const categories = await Game.find({ category: { $in: data } });
+    const categories = await Game.distinct("category"); // Obtiene las categorías únicas
     res.json(categories);
   } catch (error) {
     console.error("Error al obtener las categorías:", error.message);
     res.status(500).json({ message: "Error al obtener las categorías" });
   }
 });
+
 
 router.get("/games", async (req, res) => {
   try {
