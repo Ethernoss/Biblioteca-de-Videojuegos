@@ -57,7 +57,7 @@ app.get("/login", (req, res) => {
 const YOUR_DOMAIN = "http://localhost:3000";
 
 app.post("/create-checkout-session", async (req, res) => {
-  const { priceId, gameId } = req.body; // Recibe también el ID del juego
+  const { priceId, gameId, token } = req.body; // Recibe también el ID del juego
 
   if (!priceId || !gameId) {
     return res
@@ -89,7 +89,7 @@ app.post("/create-checkout-session", async (req, res) => {
   }
 });
 
-app.get("/session-status", async (req, res) => {
+app.get("/session-status", isAuthenticated, async (req, res) => {
   const sessionId = req.query.session_id;
 
   if (!sessionId) {
@@ -159,10 +159,9 @@ app.get("/admin", isAuthenticated, isAdmin, (req, res) => {
     return res
       .status(403)
       .json({ message: "Acceso denegado. No eres administrador." });
-    console.log("Usuario autenticado:", req.user);
   }
   res.sendFile(path.join(__dirname, "Main Panel/public/assets/admin.html"));
-  console.log("Usuario autenticado:", req.user);
+  // console.log("Usuario autenticado:", req.user);
 });
 
 // Ruta protegida para la biblioteca

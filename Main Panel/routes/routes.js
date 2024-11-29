@@ -113,7 +113,7 @@ router.post("/login", async (req, res) => {
     res.cookie("token", token, {
       httpOnly: true, // Más seguro porque solo se usa en solicitudes HTTP
       secure: false, // Cambiar a `true` si usas HTTPS
-      sameSite: "strict",
+      sameSite: "lax",
     });
 
     res.json({

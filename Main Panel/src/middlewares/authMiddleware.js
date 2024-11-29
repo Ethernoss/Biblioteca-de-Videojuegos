@@ -1,8 +1,13 @@
 const jwt = require("jsonwebtoken");
 
 function isAuthenticated(req, res, next) {
+  console.log("Cookies recibidas en la solicitud:", req.cookies);
   const token = req.cookies.token; // Leer el token desde las cookies
-  console.log("Token recibido desde cookies:", token);
+
+  // Permitir acceso a la ruta /session-status sin token
+  if (!token && req.originalUrl.includes("/session-status")) {
+    return next();
+  }
 
   if (!token) {
     return res
@@ -12,7 +17,7 @@ function isAuthenticated(req, res, next) {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log("Token decodificado:", decoded);
+    // console.log("Token decodificado:", decoded);
     req.user = decoded;
     next();
   } catch (error) {
