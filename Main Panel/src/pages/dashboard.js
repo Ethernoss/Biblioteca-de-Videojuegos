@@ -29,7 +29,7 @@ export async function Dashboard(category = "All") {
             )
           );
 
-    // Filtrar si la categoría no es "Todos"
+    // // Filtrar si la categoría no es "Todos"
     // const filteredGames =
     //   category === "All"
     //     ? games

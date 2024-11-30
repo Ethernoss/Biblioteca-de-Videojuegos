@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Elementos del DOM
   const searchInput = document.querySelector(".inputbox input"); // Input de búsqueda
-  const gamesContainer = document.querySelector(".row"); // Contenedor de las tarjetas (admin/store)
+  const gamesContainer = document.querySelector(".row"); // Contenedor de las tarjetas (admin)
   const gamesGrid = document.getElementById("gamesGrid"); // Contenedor de las tarjetas (library)
   const categoryList = document.querySelector("#categoryList"); // Lista de categorías (library)
 
@@ -42,10 +42,17 @@ document.addEventListener("DOMContentLoaded", () => {
   const loadAllGames = async () => {
     try {
       const response = await fetch("/api/games/games");
+      if (!response.ok) throw new Error("Error al cargar los juegos");
+
       const games = await response.json();
-      gamesGrid.innerHTML = GameCard(games); // Renderiza los juegos en la biblioteca
+
+      if (window.location.pathname.includes("admin.html")) {
+        gamesContainer.innerHTML = GameCard(games);
+      } else if (window.location.pathname.includes("biblioteca.html")) {
+        gamesGrid.innerHTML = GameCard(games);
+      }
     } catch (error) {
-      console.error("Error al cargar juegos:", error.message);
+      console.error("Error al cargar los juegos:", error.message);
     }
   };
 
@@ -57,10 +64,26 @@ document.addEventListener("DOMContentLoaded", () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ data: [category] }),
       });
+
       const games = await response.json();
-      gamesGrid.innerHTML = GameCard(games); // Renderiza los juegos filtrados
+
+      // Renderizar en el contenedor correcto según la página
+      if (window.location.pathname.includes("admin.html")) {
+        gamesContainer.innerHTML = GameCard(games); // Renderiza los juegos en admin.html
+      } else if (window.location.pathname.includes("biblioteca.html")) {
+        gamesGrid.innerHTML = GameCard(games); // Renderiza los juegos en biblioteca.html
+      }
     } catch (error) {
       console.error("Error al filtrar por categoría:", error.message);
+
+      // Mostrar un mensaje de error en el contenedor correspondiente
+      if (window.location.pathname.includes("admin.html")) {
+        gamesContainer.innerHTML =
+          "<p class='text-center text-danger'>Error al filtrar los juegos.</p>";
+      } else if (window.location.pathname.includes("biblioteca.html")) {
+        gamesGrid.innerHTML =
+          "<p class='text-center text-danger'>Error al filtrar los juegos.</p>";
+      }
     }
   };
 
