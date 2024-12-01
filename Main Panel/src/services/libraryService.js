@@ -5,7 +5,7 @@ const sidebarCategories = document.querySelectorAll(".sidebar .nav-link");
 // Función para cargar todos los juegos
 const loadAllGames = async () => {
   try {
-    const response = await fetch("http://localhost:3000/api/games/games"); // Endpoint para obtener todos los juegos
+    const response = await fetch("http://localhost:3000/api/games"); // Endpoint para obtener todos los juegos
     if (!response.ok) throw new Error("Error al obtener los juegos");
 
     const games = await response.json();
@@ -43,7 +43,7 @@ const filterGamesByCategory = async (selectedCategory) => {
     console.log("Categoría seleccionada:", selectedCategory);
     try {
       const response = await fetch(
-        "http://localhost:3000/api/games/gamesCategories",
+        "http://localhost:3000/api/gamesCategories",
         {
           method: "POST",
           headers: {

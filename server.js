@@ -1,6 +1,7 @@
 // server.js
 
 const express = require("express");
+const mongoose = require("mongoose");
 const cors = require("cors");
 const path = require("path");
 const dotenv = require("dotenv");
@@ -44,7 +45,7 @@ app.use(express.static(path.join(__dirname, "Main Panel/public")));
 app.use("/src", express.static(path.join(__dirname, "Main Panel/src")));
 
 // Rutas de la API
-app.use("/api/games", gameRoutes); // Todas las rutas de la API estarán bajo /api/games
+app.use("/api", gameRoutes); // Todas las rutas de la API estarán bajo /api
 
 // Ruta principal que redirige al login
 app.get("/", (req, res) => {
@@ -112,20 +113,24 @@ app.get("/session-status", isAuthenticated, async (req, res) => {
     console.log("Sesión recuperada:", session);
 
     const gameId = session.metadata.gameId;
-    const userEmail = session.customer_details.email;
 
-    if (!gameId || !userEmail) {
-      throw new Error("Faltan datos importantes en la sesión.");
+    if (!gameId) {
+      throw new Error("Falta el ID del juego en la sesión.");
     }
 
-    // Busca al usuario por su correo
-    const user = await User.findOne({ email: userEmail }).populate("library");
+    // Obtener el ID del usuario autenticado
+    const userId = req.user.id;
+
+    // Convertir gameId a ObjectId utilizando 'new'
+    const gameObjectId = new mongoose.Types.ObjectId(gameId);
+
+    // Buscar al usuario por su ID y popular la biblioteca
+    const user = await User.findById(userId).populate("library");
 
     if (!user) {
       throw new Error("Usuario no encontrado.");
     }
 
-    // Verifica que la biblioteca existe
     if (!user.library) {
       throw new Error("Biblioteca no encontrada para este usuario.");
     }
@@ -134,14 +139,13 @@ app.get("/session-status", isAuthenticated, async (req, res) => {
     console.log("Biblioteca recuperada:", user.library);
 
     // Verifica si el juego ya está en la biblioteca
-    if (!user.library.general.includes(gameId)) {
-      user.library.general.push(gameId); // Agregar al campo `general`
+    if (!user.library.general.some((id) => id.equals(gameObjectId))) {
+      user.library.general.push(gameObjectId); // Agregar al campo `general` como ObjectId
       await user.library.save();
     }
 
     res.send({
       status: session.payment_status,
-      customer_email: userEmail,
     });
   } catch (error) {
     console.error("Error recuperando el estado de la sesión:", error.message);

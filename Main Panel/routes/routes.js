@@ -1,33 +1,20 @@
+// routes.js
+
+const express = require("express");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const express = require("express");
+const mongoose = require("mongoose");
 const Game = require("../models/Game.js");
 const User = require("../models/user.js");
 const Library = require("../models/library.js");
-const mongoose = require("mongoose");
+const { isAuthenticated } = require("../src/middlewares/authMiddleware.js");
 
 const router = express.Router();
 
-router.get("/categories", async (req, res) => {
+// Ruta para obtener todos los juegos
+router.get("/games", async (req, res) => {
   try {
-    const categories = await Game.distinct("category"); // Obtiene las categorías únicas
-    res.json(categories);
-  } catch (error) {
-    console.error("Error al obtener las categorías:", error.message);
-    res.status(500).json({ message: "Error al obtener las categorías" });
-  }
-});
-
-router.post("/gamesCategories", async (req, res) => {
-  try {
-    const { data } = req.body;
-    // Obtiene todos los juegos de la base de datos que coincidan con las categorías
-    const games = await Game.find({ category: { $in: data } }); // No es necesario usar toArray()
-
-    if (!games || games.length === 0) {
-      return res.status(404).json({ message: "Juegos no encontrados" });
-    }
-    // Responde con los juegos
+    const games = await Game.find({});
     res.json(games);
   } catch (error) {
     console.error("Error al obtener los juegos:", error.message);
@@ -35,11 +22,27 @@ router.post("/gamesCategories", async (req, res) => {
   }
 });
 
-router.get("/games", async (req, res) => {
+// Ruta para obtener categorías únicas
+router.get("/categories", async (req, res) => {
   try {
-    // Obtiene todos los juegos de la base de datos
-    const games = await Game.find({});
-    // Responde con los juegos
+    const categories = await Game.distinct("category");
+    res.json(categories);
+  } catch (error) {
+    console.error("Error al obtener las categorías:", error.message);
+    res.status(500).json({ message: "Error al obtener las categorías" });
+  }
+});
+
+// Ruta para obtener juegos por categorías
+router.post("/gamesCategories", async (req, res) => {
+  try {
+    const { data } = req.body;
+    const games = await Game.find({ category: { $in: data } });
+
+    if (!games || games.length === 0) {
+      return res.status(404).json({ message: "Juegos no encontrados" });
+    }
+
     res.json(games);
   } catch (error) {
     console.error("Error al obtener los juegos:", error.message);
@@ -58,11 +61,11 @@ router.get("/search", async (req, res) => {
   }
 
   try {
-    const regex = new RegExp(query, "i"); // Búsqueda insensible a mayúsculas
+    const regex = new RegExp(query, "i");
     const games = await Game.find({
       $or: [
         { title: regex },
-        { category: { $elemMatch: { $regex: regex } } }, // Corregido
+        { category: { $elemMatch: { $regex: regex } } },
       ],
     });
 
@@ -79,14 +82,47 @@ router.get("/search", async (req, res) => {
   }
 });
 
-// Listar todos los juegos
-router.get("/", async (req, res) => {
+// Ruta para buscar juegos en la biblioteca del usuario
+router.get("/library/search", isAuthenticated, async (req, res) => {
+  const query = req.query.q;
+
+  if (!query || query.trim() === "") {
+    return res
+      .status(400)
+      .json({ message: "Debe proporcionar un término de búsqueda válido." });
+  }
+
   try {
-    const games = await Game.find({}); // Consulta todos los juegos en MongoDB
+    const regex = new RegExp(query, "i");
+    const userId = req.user.id;
+
+    // Obtener la biblioteca del usuario
+    const user = await User.findById(userId).populate({
+      path: "library",
+      populate: { path: "general", model: "Game" },
+    });
+
+    if (!user || !user.library) {
+      return res.status(404).json({ message: "Biblioteca no encontrada" });
+    }
+
+    const games = user.library.general.filter((game) =>
+      regex.test(game.title)
+    );
+
+    if (games.length === 0) {
+      return res.status(404).json({
+        message: "No se encontraron juegos que coincidan con la búsqueda.",
+      });
+    }
+
     res.json(games);
   } catch (error) {
-    console.error("Error al obtener los juegos:", error.message);
-    res.status(500).json({ message: "Error al obtener los juegos" });
+    console.error(
+      "Error al realizar la búsqueda en la biblioteca:",
+      error.message
+    );
+    res.status(500).json({ message: "Error al realizar la búsqueda." });
   }
 });
 
@@ -106,7 +142,7 @@ router.post("/register", async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Crear nuevo documento de librería vacío
-    const newLibrary = new Library({});
+    const newLibrary = new Library({ general: [] });
     await newLibrary.save();
 
     // Crear nuevo usuario con la referencia a la librería
@@ -114,8 +150,8 @@ router.post("/register", async (req, res) => {
       username,
       email,
       password: hashedPassword,
-      isAdmin: isAdmin || false, // Por defecto, no es admin
-      library: newLibrary._id.toString(), // Convierte el ObjectId a cadena
+      isAdmin: isAdmin || false,
+      library: newLibrary._id.toString(),
     });
 
     await newUser.save();
@@ -149,8 +185,8 @@ router.post("/login", async (req, res) => {
 
     // Enviar el token en una cookie
     res.cookie("token", token, {
-      httpOnly: true, // Más seguro porque solo se usa en solicitudes HTTP
-      secure: false, // Cambiar a `true` si usas HTTPS
+      httpOnly: true,
+      secure: false, // Cambiar a true si usas HTTPS
       sameSite: "lax",
     });
 
@@ -166,11 +202,12 @@ router.post("/login", async (req, res) => {
 
 // Cerrar sesión
 router.post("/logout", (req, res) => {
-  res.clearCookie("token"); // Borrar la cookie
+  res.clearCookie("token");
   res.status(200).json({ message: "Sesión cerrada exitosamente" });
 });
 
-router.post("/", async (req, res) => {
+// Ruta para agregar un nuevo juego
+router.post("/games", async (req, res) => {
   try {
     console.log("Datos recibidos en el servidor:", req.body);
 
@@ -184,16 +221,17 @@ router.post("/", async (req, res) => {
       image,
     });
 
-    const savedGame = await newGame.save(); // Guarda el juego en la base de datos
+    const savedGame = await newGame.save();
     console.log("Juego guardado en la base de datos:", savedGame);
-    res.status(201).json(savedGame); // Enviar el juego guardado al cliente
+    res.status(201).json(savedGame);
   } catch (error) {
     console.error("Error al agregar el juego:", error.message);
     res.status(400).json({ message: "Error al agregar el juego" });
   }
 });
 
-router.get("/:id", async (req, res) => {
+// Ruta para obtener un juego por ID
+router.get("/games/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -202,7 +240,7 @@ router.get("/:id", async (req, res) => {
       return res.status(400).json({ message: "ID inválido" });
     }
 
-    const game = await Game.findById(id); // Aquí ocurre el error si `id` no es un ObjectId válido
+    const game = await Game.findById(id);
     if (!game) {
       return res.status(404).json({ message: "Juego no encontrado" });
     }
@@ -215,16 +253,16 @@ router.get("/:id", async (req, res) => {
 });
 
 // Editar un juego
-router.put("/:id", async (req, res) => {
+router.put("/games/:id", async (req, res) => {
   try {
     const game = await Game.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
-      runValidators: true, // Validar los datos según el esquema
+      runValidators: true,
     });
     if (!game) {
       return res.status(404).json({ message: "Juego no encontrado" });
     }
-    res.json(game); // Devolver el juego actualizado
+    res.json(game);
   } catch (error) {
     console.error("Error al actualizar el juego:", error.message);
     res.status(500).json({ message: "Error al actualizar el juego" });
@@ -232,12 +270,43 @@ router.put("/:id", async (req, res) => {
 });
 
 // Eliminar un juego
-router.delete("/:id", async (req, res) => {
+router.delete("/games/:id", async (req, res) => {
   try {
     await Game.findByIdAndDelete(req.params.id);
     res.json({ message: "Juego eliminado exitosamente" });
   } catch (error) {
     res.status(400).json({ message: "Error al eliminar el juego" });
+  }
+});
+
+// Ruta para obtener la biblioteca del usuario autenticado
+router.get("/user/library", isAuthenticated, async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    // Encontrar al usuario
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    // Obtener la biblioteca del usuario
+    const libraryId = user.library;
+    const library = await Library.findById(libraryId);
+
+    if (!library) {
+      return res.status(404).json({ message: "Biblioteca no encontrada" });
+    }
+
+    // Obtener los IDs de los juegos en la biblioteca
+    const gameIds = library.general.map((gameId) => gameId.toString());
+
+    res.json({ games: gameIds });
+  } catch (error) {
+    console.error("Error al obtener la biblioteca del usuario:", error.message);
+    res
+      .status(500)
+      .json({ message: "Error al obtener la biblioteca del usuario" });
   }
 });
 

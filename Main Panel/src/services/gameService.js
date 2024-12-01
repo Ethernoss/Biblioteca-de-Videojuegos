@@ -1,9 +1,11 @@
-const API_URL = "http://localhost:3000/api/games";
+// gameService.js
+
+const API_URL = "http://localhost:3000/api";
 
 // Obtener todos los juegos
 export async function getGames() {
   try {
-    const response = await fetch(API_URL);
+    const response = await fetch(`${API_URL}/games`);
     if (!response.ok) {
       throw new Error("Error al obtener los juegos.");
     }
@@ -17,7 +19,7 @@ export async function getGames() {
 // Agregar un nuevo juego
 export async function addGame(game) {
   try {
-    const response = await fetch(API_URL, {
+    const response = await fetch(`${API_URL}/games`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(game),
@@ -35,7 +37,7 @@ export async function addGame(game) {
 // Actualizar un juego existente
 export async function updateGame(id, game) {
   try {
-    const response = await fetch(`${API_URL}/${id}`, {
+    const response = await fetch(`${API_URL}/games/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(game),
@@ -53,7 +55,7 @@ export async function updateGame(id, game) {
 // Eliminar un juego por su ID
 export async function deleteGame(id) {
   try {
-    const response = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+    const response = await fetch(`${API_URL}/games/${id}`, { method: "DELETE" });
     if (!response.ok) {
       throw new Error("Error al eliminar el juego.");
     }
@@ -81,7 +83,7 @@ export async function getCategories() {
 // Obtener juegos filtrados por categoría
 export async function getGamesByCategory(category) {
   try {
-    const response = await fetch(`${API_URL}/categories`, {
+    const response = await fetch(`${API_URL}/gamesCategories`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ data: [category] }),

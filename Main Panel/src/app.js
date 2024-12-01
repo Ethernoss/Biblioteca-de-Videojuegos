@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Cargar todos los juegos al inicio
   const loadAllGames = async () => {
     try {
-      const response = await fetch("/api/games/games");
+      const response = await fetch("/api/games");
       if (!response.ok) throw new Error("Error al cargar los juegos");
 
       const games = await response.json();
@@ -59,7 +59,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Filtrar juegos por categoría
   const filterByCategory = async (category) => {
     try {
-      const response = await fetch("/api/games/gamesCategories", {
+      const response = await fetch("/api/gamesCategories", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ data: [category] }),
@@ -74,7 +74,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Manejar búsqueda global
   const handleSearch = async (query) => {
     try {
-      const response = await fetch(`/api/games/search?q=${query}`, {
+      const response = await fetch(`/api/search?q=${query}`, {
         method: "GET",
         credentials: "include",
       });
@@ -110,7 +110,7 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log("Datos enviados al backend:", newGame);
 
     try {
-      const response = await fetch("/api/games", {
+      const response = await fetch("/api", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -154,7 +154,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     try {
-      const response = await fetch(`/api/games/${gameId}`, {
+      const response = await fetch(`/api/${gameId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -184,7 +184,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const gameId = event.target.dataset.id;
 
       try {
-        const response = await fetch(`/api/games/${gameId}`);
+        const response = await fetch(`/api/${gameId}`);
         if (!response.ok) {
           throw new Error("Error al obtener el juego desde la API");
         }
@@ -210,7 +210,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const gameId = event.target.dataset.id;
       if (confirm("¿Estás seguro de eliminar este juego?")) {
         try {
-          const response = await fetch(`/api/games/${gameId}`, {
+          const response = await fetch(`/api/${gameId}`, {
             method: "DELETE",
           });
 

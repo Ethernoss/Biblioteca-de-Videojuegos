@@ -1,3 +1,5 @@
+// src/components/GameCardStore.js
+
 export async function fetchGames() {
   try {
     const response = await fetch("http://localhost:3000/api/games");
@@ -6,17 +8,23 @@ export async function fetchGames() {
       throw new Error("Error al obtener los juegos");
     }
     const games = await response.json();
-    return games; // Devuelve los juegos
+    return games;
   } catch (error) {
     console.error(error.message);
-    return []; // En caso de error, retorna un arreglo vacío
+    return [];
   }
 }
 
-export function GameCardStore(games = []) {
+export function GameCardStore(games = [], ownedGameIds = []) {
+  // Aseguramos que ownedGameIds es un arreglo de cadenas
+  const ownedGameIdsString = ownedGameIds.map(id => id.toString());
+
   return games
-    .map(
-      (game) => `
+    .map((game) => {
+      const gameIdString = game._id.toString(); // Convertimos el ID del juego a cadena
+      const isOwned = ownedGameIdsString.includes(gameIdString); // Comparamos las cadenas
+
+      return `
         <div class="col">
           <div class="card h-100 shadow-sm">
             <img
@@ -29,19 +37,23 @@ export function GameCardStore(games = []) {
               <p class="card-text">Precio: $${game.price}</p>
               <p class="card-text">${game.description}</p>
               <p class="card-text">Categorías: ${game.category.join(", ")}</p>
-              <button
-                class="btn comprar-btn"
-                data-title="${game.title}"
-                data-price="${game.price}"
-                data-price-id="${game.priceId}"
-                data-game-id="${game._id}"
-              >
-                Comprar
-              </button>
+              ${
+                isOwned
+                  ? '<span class="badge bg-success">Comprado</span>'
+                  : `<button
+                      class="btn comprar-btn"
+                      data-title="${game.title}"
+                      data-price="${game.price}"
+                      data-price-id="${game.priceId}"
+                      data-game-id="${game._id}"
+                    >
+                      Comprar
+                    </button>`
+              }
             </div>
           </div>
         </div>
-      `
-    )
+      `;
+    })
     .join("");
 }
