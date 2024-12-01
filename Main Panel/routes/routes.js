@@ -78,38 +78,6 @@ router.get("/search", async (req, res) => {
   }
 });
 
-// Ruta para buscar juegos en la biblioteca
-router.get("/library/search", async (req, res) => {
-  const query = req.query.q;
-
-  if (!query || query.trim() === "") {
-    return res
-      .status(400)
-      .json({ message: "Debe proporcionar un término de búsqueda válido." });
-  }
-
-  try {
-    const regex = new RegExp(query, "i"); // Búsqueda insensible a mayúsculas
-    const games = await Game.find({
-      title: regex, // Solo busca por título en la biblioteca
-    });
-
-    if (games.length === 0) {
-      return res.status(404).json({
-        message: "No se encontraron juegos que coincidan con la búsqueda.",
-      });
-    }
-
-    res.json(games);
-  } catch (error) {
-    console.error(
-      "Error al realizar la búsqueda en la biblioteca:",
-      error.message
-    );
-    res.status(500).json({ message: "Error al realizar la búsqueda." });
-  }
-});
-
 // Listar todos los juegos
 router.get("/", async (req, res) => {
   try {

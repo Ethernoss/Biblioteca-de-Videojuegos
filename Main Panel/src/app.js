@@ -64,26 +64,10 @@ document.addEventListener("DOMContentLoaded", () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ data: [category] }),
       });
-
       const games = await response.json();
-
-      // Renderizar en el contenedor correcto según la página
-      if (window.location.pathname.includes("admin.html")) {
-        gamesContainer.innerHTML = GameCard(games); // Renderiza los juegos en admin.html
-      } else if (window.location.pathname.includes("biblioteca.html")) {
-        gamesGrid.innerHTML = GameCard(games); // Renderiza los juegos en biblioteca.html
-      }
+      renderLibraryGames(games);
     } catch (error) {
       console.error("Error al filtrar por categoría:", error.message);
-
-      // Mostrar un mensaje de error en el contenedor correspondiente
-      if (window.location.pathname.includes("admin.html")) {
-        gamesContainer.innerHTML =
-          "<p class='text-center text-danger'>Error al filtrar los juegos.</p>";
-      } else if (window.location.pathname.includes("biblioteca.html")) {
-        gamesGrid.innerHTML =
-          "<p class='text-center text-danger'>Error al filtrar los juegos.</p>";
-      }
     }
   };
 
@@ -105,33 +89,6 @@ document.addEventListener("DOMContentLoaded", () => {
       gamesContainer.innerHTML = GameCard(games); // Renderiza los resultados de búsqueda
     } catch (error) {
       console.error("Error al realizar la búsqueda:", error.message);
-    }
-  };
-
-  // Manejar búsqueda en biblioteca.html
-  const handleLibrarySearch = async (query) => {
-    try {
-      const response = await fetch(`/api/games/library/search?q=${query}`, {
-        method: "GET",
-      });
-
-      if (!response.ok) {
-        console.error("Error al buscar juegos en la biblioteca.");
-        gamesGrid.innerHTML =
-          "<p class='text-center text-danger'>No se encontraron resultados.</p>";
-        return;
-      }
-
-      const games = await response.json();
-      console.log("Resultados de búsqueda en la biblioteca:", games);
-
-      // Renderizar los resultados de búsqueda en el contenedor de la biblioteca
-      gamesGrid.innerHTML = GameCard(games);
-    } catch (error) {
-      console.error(
-        "Error al realizar la búsqueda en la biblioteca:",
-        error.message
-      );
     }
   };
 

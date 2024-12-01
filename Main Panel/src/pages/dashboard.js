@@ -29,12 +29,6 @@ export async function Dashboard(category = "All") {
             )
           );
 
-    // // Filtrar si la categoría no es "Todos"
-    // const filteredGames =
-    //   category === "All"
-    //     ? games
-    //     : games.filter((game) => game.category.includes(category));
-
     // Renderizar las tarjetas filtradas
     container.innerHTML = GameCard(filteredGames);
     console.log(filteredGames);
@@ -47,3 +41,9 @@ export async function Dashboard(category = "All") {
 document.addEventListener("DOMContentLoaded", () => {
   Dashboard(); // Carga todos los juegos por defecto
 });
+
+// // Filtrar si la categoría no es "Todos"
+// const filteredGames =
+//   category === "All"
+//     ? games
+//     : games.filter((game) => game.category.includes(category));
