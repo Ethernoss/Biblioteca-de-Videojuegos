@@ -20,11 +20,20 @@ export async function Dashboard(category = "All") {
       throw new Error("Los datos obtenidos no son un arreglo válido.");
     }
 
-    // Filtrar si la categoría no es "Todos"
     const filteredGames =
       category === "All"
         ? games
-        : games.filter((game) => game.category.includes(category));
+        : games.filter((game) =>
+            game.category.some(
+              (cat) => cat.toLowerCase() === category.toLowerCase()
+            )
+          );
+
+    // // Filtrar si la categoría no es "Todos"
+    // const filteredGames =
+    //   category === "All"
+    //     ? games
+    //     : games.filter((game) => game.category.includes(category));
 
     // Renderizar las tarjetas filtradas
     container.innerHTML = GameCard(filteredGames);
