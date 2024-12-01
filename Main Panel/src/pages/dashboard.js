@@ -1,45 +1,77 @@
 import { GameCard } from "../components/Gamecard.js";
 
-export async function Dashboard(category = "All") {
+export async function Dashboard(category = "All", page = 1) {
   const container = document.querySelector(".row");
+  const itemsPerPage = 8; // Juegos por página
 
   try {
-    // Obtén todos los juegos desde la API
+    // Obtener todos los juegos desde la API
     const response = await fetch("http://localhost:3000/api/games");
 
-    console.log("Respuesta del servidor:", response);
-
-    if (!response.ok) {
+    if (!response.ok)
       throw new Error(`Error al obtener los juegos: ${response.statusText}`);
-    }
 
-    const games = await response.json(); // Lee la respuesta como JSON
+    const games = await response.json(); // Leer la respuesta como JSON
 
-    // Valida que games sea un array antes de proceder
-    if (!Array.isArray(games)) {
+    // Validar que `games` sea un arreglo
+    if (!Array.isArray(games))
       throw new Error("Los datos obtenidos no son un arreglo válido.");
-    }
 
+    // Filtrar juegos por categoría
     const filteredGames =
       category === "All"
-        ? games
+        ? games // Si es "All", devolver todos los juegos
         : games.filter((game) =>
             game.category.some(
               (cat) => cat.toLowerCase() === category.toLowerCase()
             )
           );
 
-    // Renderizar las tarjetas filtradas
-    container.innerHTML = GameCard(filteredGames);
-    console.log(filteredGames);
+    // Paginación
+    const startIndex = (page - 1) * itemsPerPage;
+    const paginatedGames = filteredGames.slice(
+      startIndex,
+      startIndex + itemsPerPage
+    );
+
+    // Renderizar las tarjetas paginadas
+    container.innerHTML = GameCard(paginatedGames);
+
+    // Actualizar los botones de paginación
+    const totalPages = Math.ceil(filteredGames.length / itemsPerPage);
+    renderPagination(totalPages, page, category);
   } catch (error) {
     console.error("Error al obtener los juegos:", error.message);
+    container.innerHTML =
+      "<p class='text-center text-danger'>Error al cargar los juegos.</p>";
   }
 }
 
-// Llamar al Dashboard al cargar la página con "Todos"
+function renderPagination(totalPages, currentPage, category) {
+  const paginationContainer = document.querySelector("#pagination");
+  paginationContainer.innerHTML = ""; // Limpiar paginación previa
+
+  for (let i = 1; i <= totalPages; i++) {
+    const button = document.createElement("button");
+    button.className = "btn btn-primary mx-1";
+    button.textContent = i;
+
+    // Resaltar la página actual
+    if (i === currentPage) {
+      button.classList.add("active");
+    }
+
+    button.addEventListener("click", () => {
+      Dashboard(category, i); // Llamar al Dashboard con la nueva página
+    });
+
+    paginationContainer.appendChild(button);
+  }
+}
+
+// Llamar al Dashboard al cargar la página
 document.addEventListener("DOMContentLoaded", () => {
-  Dashboard(); // Carga todos los juegos por defecto
+  Dashboard("All", 1); // Cargar todos los juegos por defecto en la página 1
 });
 
 // // Filtrar si la categoría no es "Todos"

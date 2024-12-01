@@ -3,6 +3,7 @@ import { GameCard } from "./components/Gamecard.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   console.log("DOM cargado correctamente");
+  Dashboard("All", 1); // Página inicial 1
 
   // -------------------------
   // VARIABLES Y ELEMENTOS
@@ -11,8 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Elementos del DOM
   const searchInput = document.querySelector(".inputbox input"); // Input de búsqueda
   const gamesContainer = document.querySelector(".row"); // Contenedor de las tarjetas (admin)
-  const gamesGrid = document.getElementById("gamesGrid"); // Contenedor de las tarjetas (library)
-  const categoryList = document.querySelector("#categoryList"); // Lista de categorías (library)
+  const categoryList = document.querySelector("#categoryList"); // Lista de categorías
 
   // Lista de categorías predefinidas
   const categories = [
@@ -45,29 +45,63 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!response.ok) throw new Error("Error al cargar los juegos");
 
       const games = await response.json();
-
-      if (window.location.pathname.includes("admin.html")) {
-        gamesContainer.innerHTML = GameCard(games);
-      } else if (window.location.pathname.includes("biblioteca.html")) {
-        gamesGrid.innerHTML = GameCard(games);
-      }
+      gamesContainer.innerHTML = GameCard(games); // Renderiza los juegos
     } catch (error) {
       console.error("Error al cargar los juegos:", error.message);
+      gamesContainer.innerHTML =
+        "<p class='text-center text-danger'>Error al cargar los juegos.</p>";
+    }
+  };
+
+  // Paginación
+  const renderPagination = (totalPages, currentPage) => {
+    const paginationContainer = document.getElementById("pagination");
+    paginationContainer.innerHTML = ""; // Limpiar botones previos
+
+    for (let i = 1; i <= totalPages; i++) {
+      const button = document.createElement("button");
+      button.className = "btn btn-outline-primary mx-1";
+      button.textContent = i;
+
+      if (i === currentPage) {
+        button.classList.add("active");
+      }
+
+      button.addEventListener("click", () => Dashboard(undefined, i)); // Actualizar al cambiar página
+      paginationContainer.appendChild(button);
     }
   };
 
   // Filtrar juegos por categoría
   const filterByCategory = async (category) => {
     try {
-      const response = await fetch("/api/gamesCategories", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ data: [category] }),
-      });
-      const games = await response.json();
-      renderLibraryGames(games);
+      let games;
+      if (category === "All") {
+        // Cargar todos los juegos si la categoría es "All"
+        const response = await fetch("/api/games/games");
+        if (!response.ok) throw new Error("Error al cargar los juegos");
+        games = await response.json();
+      } else {
+        // Filtrar por categoría específica
+        const response = await fetch("/api/gamesCategories", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ data: [category] }),
+        });
+
+        if (!response.ok) throw new Error("Error al filtrar juegos");
+        games = await response.json();
+      }
+
+      // Renderizar juegos filtrados
+      gamesContainer.innerHTML = GameCard(games);
+      const totalPages = Math.ceil(games.length / 8); // Calcular total de páginas
+      renderPagination(totalPages, 1);
     } catch (error) {
       console.error("Error al filtrar por categoría:", error.message);
+
+      gamesContainer.innerHTML =
+        "<p class='text-center text-danger'>Error al filtrar los juegos.</p>";
     }
   };
 
@@ -76,7 +110,7 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       const response = await fetch(`/api/search?q=${query}`, {
         method: "GET",
-        credentials: "include",
+        //credentials: "include",
       });
       if (!response.ok) {
         console.error("Error al buscar juegos.");
@@ -87,6 +121,10 @@ document.addEventListener("DOMContentLoaded", () => {
       const games = await response.json();
       console.log("Resultados de búsqueda:", games);
       gamesContainer.innerHTML = GameCard(games); // Renderiza los resultados de búsqueda
+
+      // Reiniciar la paginación después de buscar
+      const totalPages = Math.ceil(games.length / 8); // Calcular total de páginas
+      renderPagination(totalPages, 1);
     } catch (error) {
       console.error("Error al realizar la búsqueda:", error.message);
     }
@@ -177,11 +215,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  // Detectar clic en botones de edición y eliminación
+  // Manejar acciones y eliminación de juegos
   const handleGameActions = async (event) => {
-    if (event.target.classList.contains("edit-game-btn")) {
+    const target = event.target;
+
+    if (target.classList.contains("edit-game-btn")) {
       // Manejar la edición de un juego
-      const gameId = event.target.dataset.id;
+      const gameId = target.dataset.id;
 
       try {
         const response = await fetch(`/api/${gameId}`);
@@ -205,30 +245,51 @@ document.addEventListener("DOMContentLoaded", () => {
       } catch (error) {
         console.error("Error al cargar los datos del juego:", error.message);
       }
-    } else if (event.target.classList.contains("delete-game-btn")) {
-      // Manejar la eliminación de un juego
-      const gameId = event.target.dataset.id;
-      if (confirm("¿Estás seguro de eliminar este juego?")) {
-        try {
-          const response = await fetch(`/api/${gameId}`, {
-            method: "DELETE",
-          });
+    } else if (target.classList.contains("delete-game-btn")) {
+      // Abrir el modal de confirmación para eliminar
+      const gameId = target.dataset.id;
 
-          if (response.ok) {
-            console.log("Juego eliminado correctamente");
-            await Dashboard(); // Actualizar la vista del Dashboard
-          } else {
-            console.error("Error al eliminar el juego");
-          }
-        } catch (error) {
-          console.error(
-            "Error al enviar la solicitud de eliminación:",
-            error.message
-          );
-        }
-      }
+      // Guardar el ID en una variable temporal
+      const confirmDeleteBtn = document.getElementById("confirmDeleteBtn");
+      confirmDeleteBtn.dataset.id = gameId;
+
+      // Mostrar el modal de confirmación
+      const deleteModal = new bootstrap.Modal(
+        document.getElementById("deleteGameModal")
+      );
+      deleteModal.show();
     }
   };
+  const confirmDeleteBtn = document.getElementById("confirmDeleteBtn");
+
+  // Manejar eliminación de juegos
+  confirmDeleteBtn.addEventListener("click", async () => {
+    const gameId = confirmDeleteBtn.dataset.id; // Obtener el ID del juego desde el botón
+
+    try {
+      const response = await fetch(`/api/${gameId}`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        console.log("Juego eliminado correctamente");
+        await Dashboard(); // Actualizar la vista del Dashboard
+      } else {
+        console.error("Error al eliminar el juego");
+      }
+    } catch (error) {
+      console.error(
+        "Error al enviar la solicitud de eliminación:",
+        error.message
+      );
+    }
+
+    // Cerrar el modal después de eliminar
+    const deleteModal = bootstrap.Modal.getInstance(
+      document.getElementById("deleteGameModal")
+    );
+    deleteModal.hide();
+  });
 
   // -------------------------
   // EVENTOS
@@ -255,11 +316,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       await handleSearch(query);
     });
-  }
-
-  // Cargar todos los juegos al inicio
-  if (gamesGrid) {
-    loadAllGames();
   }
 
   // Manejar eventos de edición y eliminación
