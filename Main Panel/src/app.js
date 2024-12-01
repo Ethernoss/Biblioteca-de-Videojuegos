@@ -11,8 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Elementos del DOM
   const searchInput = document.querySelector(".inputbox input"); // Input de búsqueda
   const gamesContainer = document.querySelector(".row"); // Contenedor de las tarjetas (admin)
-  const gamesGrid = document.getElementById("gamesGrid"); // Contenedor de las tarjetas (library)
-  const categoryList = document.querySelector("#categoryList"); // Lista de categorías (library)
+  const categoryList = document.querySelector("#categoryList"); // Lista de categorías
 
   // Lista de categorías predefinidas
   const categories = [
@@ -45,29 +44,42 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!response.ok) throw new Error("Error al cargar los juegos");
 
       const games = await response.json();
-
-      if (window.location.pathname.includes("admin.html")) {
-        gamesContainer.innerHTML = GameCard(games);
-      } else if (window.location.pathname.includes("biblioteca.html")) {
-        gamesGrid.innerHTML = GameCard(games);
-      }
+      gamesContainer.innerHTML = GameCard(games); // Renderiza los juegos
     } catch (error) {
       console.error("Error al cargar los juegos:", error.message);
+      gamesContainer.innerHTML =
+        "<p class='text-center text-danger'>Error al cargar los juegos.</p>";
     }
   };
 
   // Filtrar juegos por categoría
   const filterByCategory = async (category) => {
     try {
-      const response = await fetch("/api/games/gamesCategories", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ data: [category] }),
-      });
-      const games = await response.json();
-      renderLibraryGames(games);
+      let games;
+      if (category === "All") {
+        // Cargar todos los juegos si la categoría es "All"
+        const response = await fetch("/api/games/games");
+        if (!response.ok) throw new Error("Error al cargar los juegos");
+        games = await response.json();
+      } else {
+        // Filtrar por categoría específica
+        const response = await fetch("/api/games/gamesCategories", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ data: [category] }),
+        });
+
+        if (!response.ok) throw new Error("Error al filtrar juegos");
+        games = await response.json();
+      }
+
+      // Renderizar juegos filtrados
+      gamesContainer.innerHTML = GameCard(games);
     } catch (error) {
       console.error("Error al filtrar por categoría:", error.message);
+
+      gamesContainer.innerHTML =
+        "<p class='text-center text-danger'>Error al filtrar los juegos.</p>";
     }
   };
 
@@ -76,7 +88,7 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       const response = await fetch(`/api/games/search?q=${query}`, {
         method: "GET",
-        credentials: "include",
+        //credentials: "include",
       });
       if (!response.ok) {
         console.error("Error al buscar juegos.");
