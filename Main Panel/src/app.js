@@ -78,7 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
       let games;
       if (category === "All") {
         // Cargar todos los juegos si la categoría es "All"
-        const response = await fetch("/api/games/games");
+        const response = await fetch("/api/games");
         if (!response.ok) throw new Error("Error al cargar los juegos");
         games = await response.json();
       } else {
