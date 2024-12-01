@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const express = require("express");
 const Game = require("../models/Game.js");
 const User = require("../models/user.js");
+const Library = require("../models/library.js");
 const mongoose = require("mongoose");
 
 const router = express.Router();
@@ -136,12 +137,17 @@ router.post("/register", async (req, res) => {
     // Hashear la contraseña
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Crear nuevo usuario
+    // Crear nuevo documento de librería vacío
+    const newLibrary = new Library({});
+    await newLibrary.save();
+
+    // Crear nuevo usuario con la referencia a la librería
     const newUser = new User({
       username,
       email,
       password: hashedPassword,
       isAdmin: isAdmin || false, // Por defecto, no es admin
+      library: newLibrary._id.toString(), // Convierte el ObjectId a cadena
     });
 
     await newUser.save();
