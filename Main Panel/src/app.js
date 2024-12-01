@@ -148,7 +148,7 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log("Datos enviados al backend:", newGame);
 
     try {
-      const response = await fetch("/api", {
+      const response = await fetch("/api/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
