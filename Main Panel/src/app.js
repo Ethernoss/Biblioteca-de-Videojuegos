@@ -189,11 +189,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  // Detectar clic en botones de edición y eliminación
+  // Manejar acciones y eliminación de juegos
   const handleGameActions = async (event) => {
-    if (event.target.classList.contains("edit-game-btn")) {
+    const target = event.target;
+
+    if (target.classList.contains("edit-game-btn")) {
       // Manejar la edición de un juego
-      const gameId = event.target.dataset.id;
+      const gameId = target.dataset.id;
 
       try {
         const response = await fetch(`/api/games/${gameId}`);
@@ -217,30 +219,50 @@ document.addEventListener("DOMContentLoaded", () => {
       } catch (error) {
         console.error("Error al cargar los datos del juego:", error.message);
       }
-    } else if (event.target.classList.contains("delete-game-btn")) {
-      // Manejar la eliminación de un juego
-      const gameId = event.target.dataset.id;
-      if (confirm("¿Estás seguro de eliminar este juego?")) {
-        try {
-          const response = await fetch(`/api/games/${gameId}`, {
-            method: "DELETE",
-          });
+    } else if (target.classList.contains("delete-game-btn")) {
+      // Abrir el modal de confirmación para eliminar
+      const gameId = target.dataset.id;
 
-          if (response.ok) {
-            console.log("Juego eliminado correctamente");
-            await Dashboard(); // Actualizar la vista del Dashboard
-          } else {
-            console.error("Error al eliminar el juego");
-          }
-        } catch (error) {
-          console.error(
-            "Error al enviar la solicitud de eliminación:",
-            error.message
-          );
-        }
-      }
+      // Guardar el ID en una variable temporal
+      const confirmDeleteBtn = document.getElementById("confirmDeleteBtn");
+      confirmDeleteBtn.dataset.id = gameId;
+
+      // Mostrar el modal de confirmación
+      const deleteModal = new bootstrap.Modal(
+        document.getElementById("deleteGameModal")
+      );
+      deleteModal.show();
     }
   };
+  const confirmDeleteBtn = document.getElementById("confirmDeleteBtn");
+
+  confirmDeleteBtn.addEventListener("click", async () => {
+    const gameId = confirmDeleteBtn.dataset.id; // Obtener el ID del juego desde el botón
+
+    try {
+      const response = await fetch(`/api/games/${gameId}`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        console.log("Juego eliminado correctamente");
+        await Dashboard(); // Actualizar la vista del Dashboard
+      } else {
+        console.error("Error al eliminar el juego");
+      }
+    } catch (error) {
+      console.error(
+        "Error al enviar la solicitud de eliminación:",
+        error.message
+      );
+    }
+
+    // Cerrar el modal después de eliminar
+    const deleteModal = bootstrap.Modal.getInstance(
+      document.getElementById("deleteGameModal")
+    );
+    deleteModal.hide();
+  });
 
   // -------------------------
   // EVENTOS
@@ -267,11 +289,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       await handleSearch(query);
     });
-  }
-
-  // Cargar todos los juegos al inicio
-  if (gamesGrid) {
-    loadAllGames();
   }
 
   // Manejar eventos de edición y eliminación
