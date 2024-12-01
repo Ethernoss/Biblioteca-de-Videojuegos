@@ -1,32 +1,24 @@
-// authMiddleware.js
-const jwt = require("jsonwebtoken"); // Si usas JWT para sesiones
+const jwt = require("jsonwebtoken");
 
-// Middleware para verificar si el usuario está autenticado
 function isAuthenticated(req, res, next) {
-  const authHeader = req.headers.authorization;
-  console.log(req.headers); // Log para verificar los headers
+  console.log("Cookies recibidas en la solicitud:", req.cookies);
+  const token = req.cookies.token; // Leer el token desde las cookies
 
-  console.log("Authorization header recibido:", authHeader); // Log para verificar el header
-
-  if (!authHeader) {
-    return res
-      .status(401)
-      .json({ message: "Acceso denegado. Falta el encabezado Authorization." });
+  // Permitir acceso a la ruta /session-status sin token
+  if (!token && req.originalUrl.includes("/session-status")) {
+    return next();
   }
-  const token = authHeader.split(" ")[1];
+
   if (!token) {
     return res
       .status(401)
-      .json({ message: "Acceso denegado. Token no proporcionado." });
+      .json({ message: "Acceso denegado. Falta el token." });
   }
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-    console.log("Token decodificado:", decoded); // Log del token decodificado
-    console.log("Token recibido:", token); // Log para verificar el token
+    // console.log("Token decodificado:", decoded);
     req.user = decoded;
-
     next();
   } catch (error) {
     console.error("Error al verificar el token:", error.message);
@@ -34,12 +26,11 @@ function isAuthenticated(req, res, next) {
   }
 }
 
-// Middleware para verificar si el usuario es admin
 function isAdmin(req, res, next) {
-  if (!req.user.isAdmin) {
-    return res.status(403).json({
-      message: "Acceso denegado. No tienes permisos de administrador.",
-    });
+  if (!req.user || !req.user.isAdmin) {
+    return res
+      .status(403)
+      .json({ message: "Acceso denegado. No eres administrador." });
   }
   next();
 }

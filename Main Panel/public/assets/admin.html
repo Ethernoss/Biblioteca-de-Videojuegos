@@ -14,6 +14,7 @@
     />
     <link rel="stylesheet" href="../../src/styles/styles.css" />
   </head>
+
   <body>
     <!-- Barra de navegación -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow">
@@ -27,6 +28,12 @@
         >
           Agregar Juego
         </button>
+        <!-- Barra de búsqueda -->
+        <div class="inputbox">
+          <input required="required" type="text" />
+          <span>Search</span>
+          <i></i>
+        </div>
         <!-- Boton para cerrar sesión -->
         <div class="dropdown">
           <a
@@ -52,6 +59,37 @@
         </div>
       </div>
     </nav>
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../src/app.js" type="module"></script>
+    <!-- <script>
+      document.addEventListener("DOMContentLoaded", async () => {
+        try {
+          const response = await fetch("/api/games/check-admin", {
+            method: "GET",
+            credentials: "include", // Incluye las cookies en la solicitud
+          });
+
+          if (!response.ok) {
+            throw new Error(
+              "Acceso denegado. No tienes permisos de administrador."
+            );
+          }
+
+          const data = await response.json();
+          console.log("Acceso concedido para el administrador:", data);
+
+          if (!data.isAdmin) {
+            alert("Acceso denegado. No tienes permisos para ver esta página.");
+            window.location.href = "/login";
+          }
+        } catch (error) {
+          console.error("Error al verificar el acceso:", error.message);
+          alert("Acceso denegado. Por favor, inicia sesión.");
+          window.location.href = "/login";
+        }
+      });
+    </script> -->
 
     <!-- Contenedor principal -->
     <aside class="sidebar">
@@ -260,9 +298,6 @@
       </div>
     </div>
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../../src/app.js" type="module"></script>
     <script>
       // Botón de cerrar sesión
       const logoutBtn = document.getElementById("logoutBtn");
@@ -271,7 +306,7 @@
         try {
           const response = await fetch("/api/games/logout", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            credentials: "include", // Incluir cookies en la solicitud
           });
 
           if (response.ok) {

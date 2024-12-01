@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const express = require("express");
 const Game = require("../models/Game.js");
 const User = require("../models/user.js");
+const mongoose = require("mongoose");
 
 const router = express.Router();
 
@@ -21,7 +22,7 @@ router.post("/gamesCategories", async (req, res) => {
     const { data } = req.body;
     // Obtiene todos los juegos de la base de datos que coincidan con las categorías
     const games = await Game.find({ category: { $in: data } }); // No es necesario usar toArray()
-    
+
     if (!games || games.length === 0) {
       return res.status(404).json({ message: "Juegos no encontrados" });
     }
@@ -91,8 +92,8 @@ router.post("/register", async (req, res) => {
 router.post("/login", async (req, res) => {
   try {
     const { username, password } = req.body;
-
     const user = await User.findOne({ username });
+
     if (!user) {
       return res.status(400).json({ message: "Usuario no encontrado" });
     }
@@ -102,17 +103,21 @@ router.post("/login", async (req, res) => {
       return res.status(400).json({ message: "Contraseña incorrecta" });
     }
 
-    // Crear el token JWT
     const token = jwt.sign(
       { id: user._id, username: user.username, isAdmin: user.isAdmin },
-      process.env.JWT_SECRET
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
     );
 
-    console.log("Token generado para usuario:", token); // LOG para verificar el token
+    // Enviar el token en una cookie
+    res.cookie("token", token, {
+      httpOnly: true, // Más seguro porque solo se usa en solicitudes HTTP
+      secure: false, // Cambiar a `true` si usas HTTPS
+      sameSite: "lax",
+    });
 
     res.json({
       message: "Inicio de sesión exitoso",
-      token,
       redirect: user.isAdmin ? "/admin" : "/library",
     });
   } catch (error) {
@@ -123,14 +128,8 @@ router.post("/login", async (req, res) => {
 
 // Cerrar sesión
 router.post("/logout", (req, res) => {
-  try {
-    // Si estás usando cookies para la sesión, las eliminamos
-    res.clearCookie("sessionToken"); // Asegúrate de que sea el nombre de tu cookie de sesión
-    res.status(200).json({ message: "Sesión cerrada exitosamente" });
-  } catch (error) {
-    console.error("Error al cerrar sesión:", error.message);
-    res.status(500).json({ message: "Error al cerrar sesión" });
-  }
+  res.clearCookie("token"); // Borrar la cookie
+  res.status(200).json({ message: "Sesión cerrada exitosamente" });
 });
 
 router.post("/", async (req, res) => {
@@ -158,11 +157,19 @@ router.post("/", async (req, res) => {
 
 router.get("/:id", async (req, res) => {
   try {
-    const game = await Game.findById(req.params.id); // Busca el juego por ID
+    const { id } = req.params;
+
+    // Verificar si el ID tiene un formato válido
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "ID inválido" });
+    }
+
+    const game = await Game.findById(id); // Aquí ocurre el error si `id` no es un ObjectId válido
     if (!game) {
       return res.status(404).json({ message: "Juego no encontrado" });
     }
-    res.json(game); // Devuelve el juego encontrado
+
+    res.json(game);
   } catch (error) {
     console.error("Error al obtener el juego:", error.message);
     res.status(500).json({ message: "Error al obtener el juego" });

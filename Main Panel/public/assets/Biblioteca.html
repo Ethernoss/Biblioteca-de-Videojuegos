@@ -35,28 +35,39 @@
               <a class="nav-link active">LIBRARY</a>
             </li>
           </ul>
-          <div class="dropdown">
-            <a
-              class="nav-link dropdown-toggle"
-              href="#"
-              role="button"
-              id="userDropdown"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-            >
-              USER
-            </a>
-            <ul
-              class="dropdown-menu dropdown-menu-end"
-              aria-labelledby="userDropdown"
-            >
-              <li>
-                <button id="logoutBtn" class="dropdown-item">
-                  Cerrar sesión
-                </button>
-              </li>
-            </ul>
+          <!-- Barra de búsqueda -->
+          <div class="inputbox">
+            <input required="required" type="text" />
+            <span>Search</span>
+            <i></i>
           </div>
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <!-- Boton para cerrar sesión -->
+              <div class="dropdown">
+                <a
+                  class="nav-link dropdown-toggle"
+                  href="#"
+                  role="button"
+                  id="userDropdown"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  USER
+                </a>
+                <ul
+                  class="dropdown-menu dropdown-menu-end"
+                  aria-labelledby="userDropdown"
+                >
+                  <li>
+                    <button id="logoutBtn" class="dropdown-item">
+                      Cerrar sesión
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            </li>
+          </ul>
         </div>
       </div>
     </nav>
@@ -166,7 +177,135 @@
       </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../../src/services/libraryService.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", async () => {
+        try {
+          const response = await fetch("http://localhost:3000/library", {
+            method: "GET",
+            credentials: "include", // Incluir cookies en la solicitud
+          });
+
+          if (!response.ok) {
+            throw new Error("Acceso denegado. Por favor, inicia sesión.");
+          }
+
+          console.log("Acceso concedido a la biblioteca");
+        } catch (error) {
+          console.error("Error al validar sesión:", error.message);
+          alert(error.message);
+          window.location.href = "/login";
+        }
+      });
+    </script>
+    <script>
+      const gamesGrid = document.getElementById("gamesGrid");
+      const categoryDropdown = document.getElementById("categoryDropdown");
+      const categoryList = document.getElementById("categoryList");
+
+      // Función para cargar todos los juegos cuando se abre la página
+      const loadAllGames = async () => {
+        try {
+          const response = await fetch("http://localhost:3000/api/games/games"); // Endpoint para obtener todos los juegos
+          if (!response.ok) throw new Error("Error al obtener los juegos");
+
+          const games = await response.json();
+          gamesGrid.innerHTML = ""; // Limpiar la grilla
+
+          // Inserta los juegos en la grilla
+          games.forEach((game) => {
+            const gameCard = `
+              <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
+                <div class="card text-dark">
+                  <img src="${game.image}" class="card-img-top" alt="${game.title}">
+                  <div class="card-body">
+                    <h6 class="card-title text-center">${game.title}</h6>
+                    <p class="text-center">$${game.price}</p>
+                  </div>
+                </div>
+              </div>
+            `;
+            gamesGrid.innerHTML += gameCard;
+          });
+        } catch (error) {
+          console.error("Error al cargar los juegos:", error.message);
+          gamesGrid.innerHTML =
+            "<p class='text-center text-danger'>Error al cargar los juegos.</p>";
+        }
+      };
+
+      // Cargar los juegos al abrir la ventana
+      window.addEventListener("load", loadAllGames);
+
+      categoryDropdown.addEventListener("change", async () => {
+        const selectedCategory = categoryDropdown.value;
+
+        // Limpia la grilla de juegos
+        gamesGrid.innerHTML = "";
+
+        if (selectedCategory) {
+          try {
+            const response = await fetch(
+              "http://localhost:3000/api/games/categories",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ data: [selectedCategory] }),
+              }
+            );
+
+            if (!response.ok) throw new Error("Error al obtener los juegos");
+
+            const games = await response.json();
+            console.log(games);
+            // Inserta los juegos en el HTML
+            games.forEach((game) => {
+              const gameCard = `
+                <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
+                  <div class="card text-dark">
+                    <img src="${game.image}" class="card-img-top" alt="${game.title}">
+                    <div class="card-body">
+                      <h6 class="card-title text-center">${game.title}</h6>
+                      <p class="text-center">$${game.price}</p>
+                    </div>
+                  </div>
+                </div>
+              `;
+              gamesGrid.innerHTML += gameCard;
+            });
+          } catch (error) {
+            console.error("Error al cargar los juegos:", error.message);
+            gamesGrid.innerHTML =
+              "<p class='text-center text-danger'>Error al cargar los juegos.</p>";
+          }
+        }
+      });
+    </script>
+    <script>
+      // Botón de cerrar sesión
+      const logoutBtn = document.getElementById("logoutBtn");
+
+      logoutBtn.addEventListener("click", async () => {
+        try {
+          const response = await fetch("/api/games/logout", {
+            method: "POST",
+            credentials: "include", // Incluir cookies en la solicitud
+          });
+
+          if (response.ok) {
+            alert("Sesión cerrada exitosamente");
+            window.location.href = "/login";
+          } else {
+            const { message } = await response.json();
+            alert(`Error: ${message}`);
+          }
+        } catch (error) {
+          console.error("Error al cerrar sesión:", error);
+          alert("Error al cerrar sesión");
+        }
+      });
+    </script>
   </body>
 </html>
 
