@@ -3,6 +3,7 @@ import { GameCard } from "./components/Gamecard.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   console.log("DOM cargado correctamente");
+  Dashboard("All", 1); // Página inicial 1
 
   // -------------------------
   // VARIABLES Y ELEMENTOS
@@ -52,6 +53,25 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
+  // Paginación
+  const renderPagination = (totalPages, currentPage) => {
+    const paginationContainer = document.getElementById("pagination");
+    paginationContainer.innerHTML = ""; // Limpiar botones previos
+
+    for (let i = 1; i <= totalPages; i++) {
+      const button = document.createElement("button");
+      button.className = "btn btn-outline-primary mx-1";
+      button.textContent = i;
+
+      if (i === currentPage) {
+        button.classList.add("active");
+      }
+
+      button.addEventListener("click", () => Dashboard(undefined, i)); // Actualizar al cambiar página
+      paginationContainer.appendChild(button);
+    }
+  };
+
   // Filtrar juegos por categoría
   const filterByCategory = async (category) => {
     try {
@@ -75,6 +95,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Renderizar juegos filtrados
       gamesContainer.innerHTML = GameCard(games);
+      const totalPages = Math.ceil(games.length / 8); // Calcular total de páginas
+      renderPagination(totalPages, 1);
     } catch (error) {
       console.error("Error al filtrar por categoría:", error.message);
 
@@ -99,6 +121,10 @@ document.addEventListener("DOMContentLoaded", () => {
       const games = await response.json();
       console.log("Resultados de búsqueda:", games);
       gamesContainer.innerHTML = GameCard(games); // Renderiza los resultados de búsqueda
+
+      // Reiniciar la paginación después de buscar
+      const totalPages = Math.ceil(games.length / 8); // Calcular total de páginas
+      renderPagination(totalPages, 1);
     } catch (error) {
       console.error("Error al realizar la búsqueda:", error.message);
     }
@@ -236,6 +262,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
   const confirmDeleteBtn = document.getElementById("confirmDeleteBtn");
 
+  // Manejar eliminación de juegos
   confirmDeleteBtn.addEventListener("click", async () => {
     const gameId = confirmDeleteBtn.dataset.id; // Obtener el ID del juego desde el botón
 
