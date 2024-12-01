@@ -1,3 +1,5 @@
+// store.js
+
 import { getGames, getCategories } from "../services/gameService.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -9,7 +11,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   try {
     // Obtener juegos y categorías desde el servicio
-    const [gamesData, categories] = await Promise.all([getGames(), getCategories()]);
+    const [gamesData, categories] = await Promise.all([
+      getGames(),
+      getCategories(),
+    ]);
     games = gamesData; // Almacena los juegos en la variable 'games'
 
     // Función para renderizar los juegos
@@ -28,7 +33,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                     class="btn btn-primary comprar-btn"
                     data-title="${game.title}"
                     data-price="${game.price}"
-                    data-price-id="${game.priceId}"
                     data-game-id="${game._id}"
                   >
                     Comprar

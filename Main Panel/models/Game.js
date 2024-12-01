@@ -21,10 +21,6 @@ const gameSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  priceId: {
-    type: String,
-    required: true,
-  },
 });
 
 // Indica explícitamente el nombre de la colección si es necesario

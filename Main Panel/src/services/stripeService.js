@@ -1,25 +1,27 @@
-export function initializeStripeService() {
+// stripeService.js
+
+export function initializeStripeService(stripePublicKey) {
   const compraModal = new bootstrap.Modal(
     document.getElementById("compraModal")
   );
   const confirmPaymentBtn = document.getElementById("confirmPaymentBtn");
   const modalFooter = document.querySelector(".modal-footer");
-  let selectedPriceId = "";
-  let selectedGameId = ""; // Define selectedGameId
+  let selectedGameId = "";
+  let selectedGamePrice = 0;
+  let selectedGameTitle = "";
 
   // Manejar el clic en el botón "Comprar"
   document.addEventListener("click", (event) => {
     if (event.target.classList.contains("comprar-btn")) {
       const gameTitle = event.target.dataset.title;
       const gamePrice = event.target.dataset.price;
-      selectedPriceId = event.target.dataset.priceId;
-      selectedGameId = event.target.dataset.gameId; // Captura el gameId del botón
+      selectedGameId = event.target.dataset.gameId;
+      selectedGamePrice = gamePrice;
+      selectedGameTitle = gameTitle;
 
       // Actualiza el contenido del modal con la información del juego
       document.getElementById("gameTitle").textContent = `Juego: ${gameTitle}`;
-      document.getElementById(
-        "gamePrice"
-      ).textContent = `Precio: $${gamePrice}`;
+      document.getElementById("gamePrice").textContent = `Precio: $${gamePrice}`;
 
       // Mostrar los botones del modal
       modalFooter.classList.remove("d-none");
@@ -34,15 +36,6 @@ export function initializeStripeService() {
       // Cerrar el modal antes de redirigir
       compraModal.hide();
 
-      // const token = document.cookie
-      //   .split("; ")
-      //   .find((row) => row.startsWith("token="))
-      //   ?.split("=")[1];
-
-      // if (!token) {
-      //   console.error("Token no encontrado en las cookies");
-      // }
-
       // Crear una sesión de pago en el servidor
       const response = await fetch(
         "http://localhost:3000/create-checkout-session",
@@ -50,9 +43,10 @@ export function initializeStripeService() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            priceId: selectedPriceId,
             gameId: selectedGameId,
-          }), // Envía el gameId y priceId
+            gameTitle: selectedGameTitle,
+            gamePrice: selectedGamePrice,
+          }),
         }
       );
 
@@ -63,9 +57,7 @@ export function initializeStripeService() {
       const { sessionId } = await response.json();
 
       // Redirigir a Stripe para el pago
-      const stripe = Stripe(
-        "pk_test_51QPCNnGAB1NMfz0pds1OFvpkXpTx3Vu1BCqntod0XYln2v45sEmUOfcizau54KfujrGHr9tmdgb7vW0mgAhAmuq700KWSKi1tP"
-      );
+      const stripe = Stripe(stripePublicKey); // Usa la clave publicable pasada como parámetro
       const { error } = await stripe.redirectToCheckout({ sessionId });
 
       if (error) {

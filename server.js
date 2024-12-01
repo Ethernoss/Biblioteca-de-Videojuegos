@@ -1,3 +1,5 @@
+// server.js
+
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
@@ -12,12 +14,11 @@ const {
   isAdmin,
 } = require("./Main Panel/src/middlewares/authMiddleware.js");
 
-// Stripe setup
-const stripe = require("stripe")(
-  "sk_test_51QPCNnGAB1NMfz0pEaLpkGnWmhoeg9texZClV5m8cqjpqe5TkJtX2uK0LjYftfI3n5bM0gZdet09ugAho16i8mjc00jdPHsbgZ"
-);
+// Configuración de variables de entorno
+dotenv.config(); // Carga las variables de entorno desde .env
 
-dotenv.config(); // Configuración del archivo .env
+// Stripe setup
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY); // Usa la clave secreta desde .env
 
 const app = express();
 const PORT = 3000;
@@ -25,17 +26,19 @@ const PORT = 3000;
 // Conexión a MongoDB
 connectDB(); // Llama a la conexión desde db.js
 
-// Middleware para parsear JSON
+// Middleware para parsear JSON y cookies
 app.use(express.json());
 app.use(cookieParser());
 
+// Configuración de CORS
 app.use(
   cors({
-    origin: "http://localhost:3000", // Allow your frontend's origin
-    credentials: true, // Allow credentials (cookies, Authorization headers)
-    allowedHeaders: ["Content-Type", "Authorization"], // Allow custom headers
+    origin: "http://localhost:3000", // Permite el origen del frontend
+    credentials: true, // Permite credenciales (cookies, encabezados de autorización)
+    allowedHeaders: ["Content-Type", "Authorization"], // Permite encabezados personalizados
   })
 );
+
 // Servir archivos estáticos desde "public"
 app.use(express.static(path.join(__dirname, "Main Panel/public")));
 app.use("/src", express.static(path.join(__dirname, "Main Panel/src")));
@@ -57,12 +60,12 @@ app.get("/login", (req, res) => {
 const YOUR_DOMAIN = "http://localhost:3000";
 
 app.post("/create-checkout-session", async (req, res) => {
-  const { priceId, gameId, token } = req.body; // Recibe también el ID del juego
+  const { gameId, gameTitle, gamePrice } = req.body; // Recibe gameId, gameTitle y gamePrice
 
-  if (!priceId || !gameId) {
+  if (!gameId || !gameTitle || !gamePrice) {
     return res
       .status(400)
-      .json({ error: "Price ID y Game ID son requeridos." });
+      .json({ error: "Game ID, Title y Price son requeridos." });
   }
 
   try {
@@ -70,7 +73,13 @@ app.post("/create-checkout-session", async (req, res) => {
       payment_method_types: ["card"],
       line_items: [
         {
-          price: priceId,
+          price_data: {
+            currency: "usd", // Cambia la moneda si es necesario
+            product_data: {
+              name: gameTitle,
+            },
+            unit_amount: Math.round(gamePrice * 100), // Convierte el precio a centavos
+          },
           quantity: 1,
         },
       ],
@@ -140,19 +149,6 @@ app.get("/session-status", isAuthenticated, async (req, res) => {
   }
 });
 
-// app.get("/api/games/check-admin", isAuthenticated, (req, res) => {
-//   try {
-//     console.log("Acceso concedido. Usuario autenticado:", req.user);
-//     res.json({ isAdmin: req.user.isAdmin });
-//   } catch (error) {
-//     console.error(
-//       "Error al verificar el acceso de administrador:",
-//       error.message
-//     );
-//     res.status(500).json({ message: "Error interno del servidor." });
-//   }
-// });
-
 // Ruta principal que apunta a "admin.html"
 app.get("/admin", isAuthenticated, isAdmin, (req, res) => {
   if (!req.user.isAdmin) {
@@ -161,7 +157,6 @@ app.get("/admin", isAuthenticated, isAdmin, (req, res) => {
       .json({ message: "Acceso denegado. No eres administrador." });
   }
   res.sendFile(path.join(__dirname, "Main Panel/public/assets/admin.html"));
-  // console.log("Usuario autenticado:", req.user);
 });
 
 // Ruta protegida para la biblioteca
@@ -175,6 +170,7 @@ app.get("/library", isAuthenticated, (req, res) => {
 app.get("/store", isAuthenticated, (req, res) => {
   res.sendFile(path.join(__dirname, "Main Panel/public/assets/Tienda.html"));
 });
+
 // Iniciar el servidor
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);
