@@ -315,3 +315,35 @@ button:hover {
 .inputbox input:focus ~ i {
   height: 44px;
 }
+
+/* General */
+/* Asegúrate de que estas clases sean específicas a la tabla de usuarios */
+#usersTableBody tr:nth-child(even) {
+  background-color: #f3f4f6; /* Gris claro */
+}
+
+#usersTableBody tr:nth-child(odd) {
+  background-color: #e2e8f0; /* Azul claro tenue */
+}
+
+#usersTableBody td,
+#usersTableBody th {
+  border: 1px solid #cbd5e0; /* Gris tenue */
+  padding: 10px;
+  text-align: center;
+}
+
+#usersTableBody .delete-user-btn {
+  color: #ffffff;
+  background-color: #ef4444; /* Rojo */
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+#usersTableBody .delete-user-btn:hover {
+  background-color: #dc2626; /* Rojo más oscuro */
+}

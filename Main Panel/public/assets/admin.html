@@ -28,6 +28,16 @@
         >
           Agregar Juego
         </button>
+        <button
+          id="viewUsersBtn"
+          type="button"
+          class="btn btn-primary"
+          data-bs-toggle="modal"
+          data-bs-target="#usersModal"
+        >
+          Ver Usuarios
+        </button>
+
         <!-- Barra de búsqueda -->
         <div class="inputbox">
           <input required="required" type="text" />
@@ -285,6 +295,52 @@
       </div>
     </div>
 
+    <!-- Modal para usuarios -->
+    <div
+      class="modal fade"
+      id="usersModal"
+      tabindex="-1"
+      aria-labelledby="usersModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="usersModalLabel">Lista de Usuarios</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Usuario</th>
+                  <th>Email</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="usersTableBody">
+                <!-- Aquí se renderizan los usuarios dinámicamente -->
+              </tbody>
+            </table>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cerrar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
     <script>
       // Botón de cerrar sesión
       const logoutBtn = document.getElementById("logoutBtn");

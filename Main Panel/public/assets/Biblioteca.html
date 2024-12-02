@@ -211,7 +211,9 @@
       // Función para cargar todos los juegos cuando se abre la página
       const loadAllGames = async () => {
         try {
-          const response = await fetch("http://localhost:3000/api/personalGames"); // Endpoint para obtener todos los juegos
+          const response = await fetch(
+            "http://localhost:3000/api/personalGames"
+          ); // Endpoint para obtener todos los juegos
           if (!response.ok) throw new Error("Error al obtener los juegos");
 
           const games = await response.json();
@@ -256,13 +258,16 @@
               throw new Error("Token no disponible en el cliente.");
             }
 
-            const response = await fetch("http://localhost:3000/api/gamesCategoriesPersonal", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({ data: [selectedCategory], token }), // Enviar categoría y token
-            });
+            const response = await fetch(
+              "http://localhost:3000/api/gamesCategoriesPersonal",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ data: [selectedCategory], token }), // Enviar categoría y token
+              }
+            );
 
             if (!response.ok) throw new Error("Error al obtener los juegos");
 
@@ -289,13 +294,11 @@
             gamesGrid.innerHTML =
               "<p class='text-center text-danger'>Error al cargar los juegos.</p>";
           }
-        }else if(selectedCategory === "All"){
+        } else if (selectedCategory === "All") {
           console.log("Asd");
           loadAllGames();
         }
       });
-      
-
     </script>
     <script>
       // Botón de cerrar sesión
@@ -310,18 +313,28 @@
 
           if (response.ok) {
             localStorage.setItem("token", ""); // Limpiar el token almacenado
-            alert("Sesión cerrada exitosamente");
-            window.location.href = "/login";
+            Swal.fire({
+              icon: "success",
+              title: "Sesión cerrada",
+              text: "Has cerrado sesión exitosamente",
+            }).then(() => {
+              window.location.href = "/login"; // Redirige al login después de cerrar sesión
+            });
           } else {
             const { message } = await response.json();
             alert(`Error: ${message}`);
           }
         } catch (error) {
           console.error("Error al cerrar sesión:", error);
-          alert("Error al cerrar sesión");
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Hubo un error al intentar cerrar sesión",
+          });
         }
       });
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   </body>
 </html>
 

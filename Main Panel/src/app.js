@@ -1,5 +1,6 @@
 import { Dashboard } from "./pages/dashboard.js";
 import { GameCard } from "./components/Gamecard.js";
+//import { fetchUsers, deleteUser } from "./services/userService.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   console.log("DOM cargado correctamente");
@@ -331,6 +332,82 @@ document.addEventListener("DOMContentLoaded", () => {
   if (editGameForm) {
     editGameForm.addEventListener("submit", handleEditGame);
   }
+  // Obtener usuarios desde el backend
+  document
+    .getElementById("viewUsersBtn")
+    .addEventListener("click", async () => {
+      const usersTableBody = document.getElementById("usersTableBody");
+
+      try {
+        const response = await fetch("/api/users", {
+          method: "GET",
+          credentials: "include",
+        });
+
+        if (!response.ok) {
+          throw new Error("Error al obtener usuarios");
+        }
+
+        const users = await response.json();
+
+        // Limpiar la tabla antes de renderizar
+        usersTableBody.innerHTML = "";
+
+        // Renderizar cada usuario en una fila
+        users.forEach((user) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+          <td>${user._id}</td> 
+          <td>${user.username}</td>
+          <td>${user.email}</td>
+          <td>
+            <button class="btn btn-danger btn-sm delete-user-btn" data-id="${user._id}">
+              Eliminar
+            </button>
+          </td>
+        `;
+          usersTableBody.appendChild(row);
+        });
+      } catch (error) {
+        console.error("Error al obtener usuarios:", error.message);
+      }
+    });
+
+  // Manejar el clic en el botón "Eliminar Usuario"
+  document
+    .getElementById("usersTableBody")
+    .addEventListener("click", async (e) => {
+      if (e.target.classList.contains("delete-user-btn")) {
+        const userId = e.target.dataset.id;
+
+        try {
+          const response = await fetch(`/api/users/${userId}`, {
+            method: "DELETE",
+            credentials: "include",
+          });
+
+          if (!response.ok) {
+            throw new Error("Error al eliminar el usuario");
+          }
+
+          Swal.fire({
+            icon: "success",
+            title: "Usuario eliminado",
+            text: "El usuario ha sido eliminado correctamente.",
+          });
+
+          // Refrescar la lista de usuarios
+          document.getElementById("viewUsersBtn").click();
+        } catch (error) {
+          console.error("Error al eliminar usuario:", error.message);
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "No se pudo eliminar el usuario.",
+          });
+        }
+      }
+    });
 });
 
 // const handleAddGame = async (event) => {

@@ -21,7 +21,9 @@ export function initializeStripeService(stripePublicKey) {
 
       // Actualiza el contenido del modal con la información del juego
       document.getElementById("gameTitle").textContent = `Juego: ${gameTitle}`;
-      document.getElementById("gamePrice").textContent = `Precio: $${gamePrice}`;
+      document.getElementById(
+        "gamePrice"
+      ).textContent = `Precio: $${gamePrice}`;
 
       // Mostrar los botones del modal
       modalFooter.classList.remove("d-none");
@@ -98,6 +100,9 @@ export function initializeStripeService(stripePublicKey) {
           document.getElementById(
             "paymentMessage"
           ).textContent = `Pago completado con éxito. Un correo ha sido enviado a ${session.customer_email}`;
+          // Eliminar el parámetro session_id de la URL
+          const newUrl = `${window.location.origin}/store`;
+          window.history.replaceState(null, "", newUrl);
         } else {
           document.getElementById("paymentMessage").textContent =
             "El pago no se completó. Intenta nuevamente.";
