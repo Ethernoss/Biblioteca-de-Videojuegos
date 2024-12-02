@@ -259,7 +259,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const gameId = confirmDeleteBtn.dataset.id; // Obtener el ID del juego desde el botón
 
     try {
-      const response = await fetch(`/api/${gameId}`, {
+      const response = await fetch(`/api/games/${gameId}`, {
         method: "DELETE",
       });
 
