@@ -302,7 +302,7 @@
           });
 
           if (response.ok) {
-            localStorage.setItem("token")
+            localStorage.setItem("token", ""); // Limpiar el token almacenado
             alert("Sesión cerrada exitosamente");
             window.location.href = "/login";
           } else {
