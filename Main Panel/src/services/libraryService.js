@@ -1,11 +1,23 @@
 const gamesGrid = document.getElementById("gamesGrid");
 const categoryDropdown = document.getElementById("categoryDropdown");
 const sidebarCategories = document.querySelectorAll(".sidebar .nav-link");
+const searchInput = document.querySelector(".inputbox input");
+
 
 // Función para cargar todos los juegos
 const loadAllGames = async () => {
   try {
-    const response = await fetch("http://localhost:3000/api/games"); // Endpoint para obtener todos los juegos
+    const token = localStorage.getItem("token")
+
+
+    const response = await fetch("http://localhost:3000/api/personalGames", {
+      method: "POST", // Cambiado a POST
+      headers: {
+        "Content-Type": "application/json", 
+      },
+      body: JSON.stringify({ library: token }), 
+    });
+
     if (!response.ok) throw new Error("Error al obtener los juegos");
 
     const games = await response.json();
@@ -37,6 +49,7 @@ const loadAllGames = async () => {
 
 // Función para filtrar juegos por categoría
 const filterGamesByCategory = async (selectedCategory) => {
+  const token = localStorage.getItem("token")
   gamesGrid.innerHTML = ""; // Limpia la grilla de juegos
 
   if (selectedCategory) {
@@ -49,11 +62,15 @@ const filterGamesByCategory = async (selectedCategory) => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ data: [selectedCategory] }),
+          body: JSON.stringify({ data: [selectedCategory], token: token }),
         }
       );
 
-      if (!response.ok) throw new Error("Error al obtener los juegos");
+      if (!response.ok) {
+        const error = new Error("Error al obtener los juegos");
+        error.status = response.status; 
+        throw error; 
+      }
 
       const games = await response.json();
 
@@ -75,12 +92,36 @@ const filterGamesByCategory = async (selectedCategory) => {
         gamesGrid.innerHTML += gameCard;
       });
     } catch (error) {
-      console.error("Error al cargar los juegos:", error.message);
-      gamesGrid.innerHTML =
-        "<p class='text-center text-danger'>Error al cargar los juegos.</p>";
+      if (error.status === 404) {
+        gamesGrid.innerHTML =
+          `<p class='text-center text-warning'>No tienes juegos en esta categoría.</p>`;
+      } else {
+        console.error("Error al cargar los juegos:", error.message);
+        gamesGrid.innerHTML =
+          `<p class='text-center text-danger'>Error al cargar los juegos.</p>`;
+      }
     }
   }
 };
+
+const searchGames = (searchTerm) => {
+  const gameCards = Array.from(document.querySelectorAll("#gamesGrid .card"));
+
+  gameCards.forEach((card) => {
+    const title = card.querySelector(".card-title").textContent.toLowerCase();
+
+    if (title.includes(searchTerm.toLowerCase())) {
+      card.parentElement.style.display = ""; // Mostrar
+    } else {
+      card.parentElement.style.display = "none"; // Ocultar
+    }
+  });
+};
+
+searchInput.addEventListener("input", (event) => {
+  const searchTerm = event.target.value.trim();
+  searchGames(searchTerm);
+});
 
 // Evento al cargar la página
 window.addEventListener("load", loadAllGames);
