@@ -56,7 +56,7 @@ const filterGamesByCategory = async (selectedCategory) => {
     console.log("Categoría seleccionada:", selectedCategory);
     try {
       const response = await fetch(
-        "http://localhost:3000/api/gamesCategories",
+        "http://localhost:3000/api/gamesCategoriesPersonal",
         {
           method: "POST",
           headers: {
