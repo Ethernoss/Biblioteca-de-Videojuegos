@@ -181,6 +181,7 @@
 
             if (response.ok) {
               const { message, redirect, token } = await response.json(); // Recibimos el token del servidor
+              localStorage.setItem("token", token)
               alert(message);
 
               // Redirigir al usuario según el rol
