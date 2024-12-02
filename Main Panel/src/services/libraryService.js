@@ -51,8 +51,10 @@ const loadAllGames = async () => {
 const filterGamesByCategory = async (selectedCategory) => {
   const token = localStorage.getItem("token")
   gamesGrid.innerHTML = ""; // Limpia la grilla de juegos
-
-  if (selectedCategory) {
+  if (selectedCategory === "All") {
+    loadAllGames();
+  }
+  else if (selectedCategory) {
     console.log("Categoría seleccionada:", selectedCategory);
     try {
       const response = await fetch(
@@ -101,7 +103,7 @@ const filterGamesByCategory = async (selectedCategory) => {
           `<p class='text-center text-danger'>Error al cargar los juegos.</p>`;
       }
     }
-  }
+  } 
 };
 
 const searchGames = (searchTerm) => {

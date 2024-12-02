@@ -79,6 +79,9 @@
           <h5 class="text-light mb-4">Categories</h5>
           <ul class="nav flex-column">
             <li class="nav-item mb-2">
+              <a class="nav-link text-white" href="#">All</a>
+            </li>
+            <li class="nav-item mb-2">
               <a class="nav-link text-white" href="#">Action</a>
             </li>
             <li class="nav-item mb-2">
@@ -149,6 +152,7 @@
                   id="categoryDropdown"
                   aria-labelledby="sortDropdown"
                 >
+                  <li><a class="dropdown-item">All</a></li>
                   <li><a class="dropdown-item">Action</a></li>
                   <li><a class="dropdown-item">Adventure</a></li>
                   <li><a class="dropdown-item">RPG</a></li>
@@ -243,7 +247,7 @@
 
         // Limpia la grilla de juegos
         gamesGrid.innerHTML = "";
-
+        console.log(selectedCategory);
         if (selectedCategory) {
           try {
             const token = localStorage.getItem("token"); // Obtener el token almacenado en el cliente
@@ -285,6 +289,9 @@
             gamesGrid.innerHTML =
               "<p class='text-center text-danger'>Error al cargar los juegos.</p>";
           }
+        }else if(selectedCategory === "All"){
+          console.log("Asd");
+          loadAllGames();
         }
       });
       
