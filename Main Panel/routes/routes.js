@@ -38,6 +38,30 @@ router.get("/games", async (req, res) => {
   }
 });
 
+
+// Ruta para obtener todos los juegos
+router.post("/personalGames", async (req, res) => {
+  try {
+    const token  = req.body.library;
+    console.log(token)
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const library = decoded.library;
+    
+    const userLibrary = await Library.findOne({ _id: library });
+    const gameIds = userLibrary.general.map(id => new mongoose.Types.ObjectId(id));
+
+    const games = await Game.find({ _id: { $in: gameIds } });
+
+    res.json(games);
+  } catch (error) {
+    console.error("Error al obtener los juegos:", error.message);
+    res.status(500).json({ message: "Error al obtener los juegos" });
+  }
+});
+
+
+
 // Ruta para obtener categorías únicas
 router.get("/categories", async (req, res) => {
   try {
@@ -59,7 +83,51 @@ router.post("/gamesCategories", async (req, res) => {
     }); // Ordenar alfabéticamente por título
 
     if (!games || games.length === 0) {
-      return res.status(404).json({ message: "Juegos no encontrados" });
+      return res.status(404).json({ message: "No se encontraron juegos en esta categoría para esta biblioteca." });
+    }
+
+    res.json(games);
+  } catch (error) {
+    console.error("Error al obtener los juegos por categoría:", error.message);
+    res
+      .status(500)
+      .json({ message: "Error al obtener los juegos por categoría" });
+  }
+});
+router.post("/gamesCategoriesPersonal", async (req, res) => {
+  try {
+    const { data, token } = req.body;
+
+    if (!token) {
+      return res.status(400).json({ message: "Token no proporcionado." });
+    }
+
+    // Decodificar el token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET); // Asegúrate de configurar JWT_SECRET
+    const library = decoded.library;
+
+    if (!library) {
+      return res.status(400).json({ message: "El token no contiene el campo library." });
+    }
+
+    // Buscar la biblioteca del usuario
+    const userLibrary = await Library.findOne({ _id: library });
+
+    if (!userLibrary || !userLibrary.general) {
+      return res.status(404).json({ message: "Biblioteca no encontrada o vacía." });
+    }
+
+    // Obtener los IDs de los juegos de la biblioteca
+    const gameIds = userLibrary.general.map((id) => new mongoose.Types.ObjectId(id));
+
+    // Filtrar los juegos que pertenecen a la categoría seleccionada y están en la biblioteca
+    const games = await Game.find({
+      _id: { $in: gameIds },
+      category: { $in: data },
+    });
+
+    if (!games || games.length === 0) {
+      return res.status(404).json({ message: "No se encontraron juegos en esta categoría para esta biblioteca." });
     }
 
     res.json(games);
@@ -194,7 +262,7 @@ router.post("/login", async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: user._id, username: user.username, isAdmin: user.isAdmin },
+      { id: user._id, username: user.username, isAdmin: user.isAdmin, library: user.library },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
@@ -209,6 +277,7 @@ router.post("/login", async (req, res) => {
     res.json({
       message: "Inicio de sesión exitoso",
       redirect: user.isAdmin ? "/admin" : "/library",
+      token: token
     });
   } catch (error) {
     console.error("Error al iniciar sesión:", error.message);
