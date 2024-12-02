@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
     "Sports",
     "Racing",
     "Puzzle",
-    "Plataformer",
+    "Platformer",
     "Fighting",
     "Horror",
     "Survival",
