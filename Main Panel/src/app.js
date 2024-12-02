@@ -134,26 +134,18 @@ document.addEventListener("DOMContentLoaded", () => {
   const handleAddGame = async (event) => {
     event.preventDefault(); // Evitar recargar la página
 
-    const newGame = {
-      title: document.getElementById("gameTitle").value,
-      price: parseFloat(document.getElementById("gamePrice").value),
-      description: document.getElementById("gameDescription").value,
-      category: document
-        .getElementById("gameCategory")
-        .value.split(",")
-        .map((cat) => cat.trim()), // Convertir categorías a un arreglo
-      image: document.getElementById("gameImage").value,
-    };
+    const addGameForm = document.getElementById("addGameForm");
+    const formData = new FormData(addGameForm); // Crear un FormData con los datos del formulario
 
-    console.log("Datos enviados al backend:", newGame);
+    // Verificar qué datos se envían
+    for (let [key, value] of formData.entries()) {
+      console.log(`${key}: ${value}`);
+    }
 
     try {
-      const response = await fetch("/api/", {
+      const response = await fetch("/api/games", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newGame),
+        body: formData, // Enviar los datos como FormData
       });
 
       if (response.ok) {
@@ -171,7 +163,7 @@ document.addEventListener("DOMContentLoaded", () => {
         console.error("Error al agregar el juego");
       }
     } catch (error) {
-      console.error("Error al enviar la solicitud:", error);
+      console.error("Error al enviar la solicitud:", error.message);
     }
   };
 

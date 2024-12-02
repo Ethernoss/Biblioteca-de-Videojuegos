@@ -1,5 +1,4 @@
 // routes.js
-
 const express = require("express");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -8,8 +7,23 @@ const Game = require("../models/Game.js");
 const User = require("../models/user.js");
 const Library = require("../models/library.js");
 const { isAuthenticated } = require("../src/middlewares/authMiddleware.js");
+const multer = require("multer");
+const path = require("path");
 
 const router = express.Router();
+
+// Configuración de almacenamiento de multer
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, path.join(__dirname, "../uploads")); // Guardar en la carpeta 'uploads'
+  },
+  filename: (req, file, cb) => {
+    const uniqueName = `${Date.now()}-${file.originalname}`;
+    cb(null, uniqueName);
+  },
+});
+
+const upload = multer({ storage });
 
 // Ruta para obtener todos los juegos
 router.get("/games", async (req, res) => {
@@ -63,10 +77,7 @@ router.get("/search", async (req, res) => {
   try {
     const regex = new RegExp(query, "i");
     const games = await Game.find({
-      $or: [
-        { title: regex },
-        { category: { $elemMatch: { $regex: regex } } },
-      ],
+      $or: [{ title: regex }, { category: { $elemMatch: { $regex: regex } } }],
     });
 
     if (games.length === 0) {
@@ -106,9 +117,7 @@ router.get("/library/search", isAuthenticated, async (req, res) => {
       return res.status(404).json({ message: "Biblioteca no encontrada" });
     }
 
-    const games = user.library.general.filter((game) =>
-      regex.test(game.title)
-    );
+    const games = user.library.general.filter((game) => regex.test(game.title));
 
     if (games.length === 0) {
       return res.status(404).json({
@@ -207,18 +216,28 @@ router.post("/logout", (req, res) => {
 });
 
 // Ruta para agregar un nuevo juego
-router.post("/games", async (req, res) => {
+// Ruta para agregar un nuevo juego
+router.post("/games", upload.single("image"), async (req, res) => {
   try {
+    const { title, price, description, category } = req.body;
+
     console.log("Datos recibidos en el servidor:", req.body);
 
-    const { title, price, description, category, image } = req.body;
+    if (!title || !price || !description || !category) {
+      return res
+        .status(400)
+        .json({ message: "Todos los campos son obligatorios" });
+    }
+
+    // Ruta de la imagen cargada
+    const imagePath = req.file ? `/uploads/${req.file.filename}` : null;
 
     const newGame = new Game({
       title,
       price,
       description,
-      category,
-      image,
+      category: category.split(",").map((cat) => cat.trim()),
+      image: imagePath,
     });
 
     const savedGame = await newGame.save();
@@ -311,3 +330,27 @@ router.get("/user/library", isAuthenticated, async (req, res) => {
 });
 
 module.exports = router;
+
+// Ruta para agregar un nuevo juego
+// router.post("/games", async (req, res) => {
+//   try {
+//     console.log("Datos recibidos en el servidor:", req.body);
+
+//     const { title, price, description, category, image } = req.body;
+
+//     const newGame = new Game({
+//       title,
+//       price,
+//       description,
+//       category,
+//       image,
+//     });
+
+//     const savedGame = await newGame.save();
+//     console.log("Juego guardado en la base de datos:", savedGame);
+//     res.status(201).json(savedGame);
+//   } catch (error) {
+//     console.error("Error al agregar el juego:", error.message);
+//     res.status(400).json({ message: "Error al agregar el juego" });
+//   }
+// });
