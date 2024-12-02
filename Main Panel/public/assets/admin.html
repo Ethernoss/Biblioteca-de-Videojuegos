@@ -98,13 +98,14 @@
             ></button>
           </div>
           <div class="modal-body">
-            <form id="addGameForm">
+            <form id="addGameForm" enctype="multipart/form-data">
               <div class="mb-3">
                 <label for="gameTitle" class="form-label">Título</label>
                 <input
                   type="text"
                   class="form-control"
                   id="gameTitle"
+                  name="title"
                   required
                 />
               </div>
@@ -114,6 +115,7 @@
                   type="number"
                   class="form-control"
                   id="gamePrice"
+                  name="price"
                   required
                 />
               </div>
@@ -125,6 +127,7 @@
                   type="text"
                   class="form-control"
                   id="gameDescription"
+                  name="description"
                   required
                 />
               </div>
@@ -134,6 +137,7 @@
                   type="text"
                   class="form-control"
                   id="gameCategory"
+                  name="category"
                   placeholder="Separar por comas"
                   required
                 />
@@ -141,9 +145,10 @@
               <div class="mb-3">
                 <label for="gameImage" class="form-label">Cargar Imagen</label>
                 <input
-                  type="image"
+                  type="file"
                   class="form-control"
                   id="gameImage"
+                  name="image"
                   accept="image/*"
                   required
                 />
@@ -175,13 +180,14 @@
             ></button>
           </div>
           <div class="modal-body">
-            <form id="editGameForm">
+            <form id="editGameForm" enctype="multipart/form-data">
               <div class="mb-3">
                 <label for="editGameTitle" class="form-label">Título</label>
                 <input
                   type="text"
                   class="form-control"
                   id="editGameTitle"
+                  name="title"
                   required
                 />
               </div>
@@ -191,40 +197,45 @@
                   type="number"
                   class="form-control"
                   id="editGamePrice"
+                  name="price"
                   required
                 />
               </div>
               <div class="mb-3">
                 <label for="editGameCategory" class="form-label"
-                  >Categoría</label
+                  >Categorías</label
                 >
                 <input
                   type="text"
                   class="form-control"
                   id="editGameCategory"
+                  name="category"
+                  placeholder="Separar por comas"
                   required
                 />
               </div>
               <div class="mb-3">
                 <label for="editGameDescription" class="form-label"
-                  >Plataforma</label
+                  >Descripción</label
                 >
                 <input
                   type="text"
                   class="form-control"
                   id="editGameDescription"
+                  name="description"
                   required
                 />
               </div>
               <div class="mb-3">
                 <label for="editGameImage" class="form-label"
-                  >URL de la Imagen</label
+                  >Cargar Imagen</label
                 >
                 <input
-                  type="text"
+                  type="file"
                   class="form-control"
                   id="editGameImage"
-                  required
+                  name="image"
+                  accept="image/*"
                 />
               </div>
               <button type="submit" class="btn btn-primary">
