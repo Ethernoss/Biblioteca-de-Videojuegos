@@ -1,97 +1,131 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Game Store</title>
-  <!-- Bootstrap CSS desde CDN -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="../../src/styles/stylesStore.css" />
-  <script src="https://js.stripe.com/v3/"></script>
-</head>
-<body class="bg-dark text-white">
-  <!-- Navbar Superior -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="#">Steam 2</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav me-auto">
-          <li class="nav-item">
-            <a class="nav-link active" href="#">STORE</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/library">LIBRARY</a>
-          </li>
-          <li class="nav-item dropdown">
-            <a
-              class="nav-link dropdown-toggle"
-              href="#"
-              id="categoryDropdown"
-              role="button"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Game Store</title>
+    <!-- Bootstrap CSS desde CDN -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../../src/styles/stylesStore.css" />
+    <script src="https://js.stripe.com/v3/"></script>
+  </head>
+  <body class="bg-dark text-white">
+    <!-- Navbar Superior -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">🎮 Steam 2</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item">
+              <a class="nav-link active" href="#">STORE</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/library">LIBRARY</a>
+            </li>
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                id="categoryDropdown"
+                role="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                Categorías
+              </a>
+              <ul
+                id="categoryFilter"
+                class="dropdown-menu"
+                aria-labelledby="categoryDropdown"
+              >
+                <!-- Categorías se generarán dinámicamente -->
+              </ul>
+            </li>
+          </ul>
+        </div>
+        <!-- Barra de búsqueda -->
+        <div class="inputbox">
+          <input required="required" type="text" id="searchInput" />
+          <span>Search</span>
+          <i></i>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Contenido Principal -->
+    <div class="container-fluid my-5">
+      <main class="row row-cols-1 row-cols-md-4 g-4" id="gameGrid"></main>
+      <div id="pagination" class="d-flex justify-content-center mt-4">
+        <!-- Los botones de paginación se generarán dinámicamente -->
+      </div>
+    </div>
+
+    <div
+      class="modal fade"
+      id="compraModal"
+      tabindex="-1"
+      aria-labelledby="compraModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content bg-dark text-white">
+          <div class="modal-header">
+            <h5 class="modal-title" id="compraModalLabel">Confirmar compra</h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <!-- Información del juego -->
+            <div id="gameInfo">
+              <p id="gameTitle"></p>
+              <p id="gamePrice"></p>
+            </div>
+
+            <!-- Estado del pago -->
+            <div id="paymentStatus" class="d-none">
+              <p id="paymentMessage" class="text-center"></p>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
             >
-              Categorías
-            </a>
-            <ul id="categoryFilter" class="dropdown-menu" aria-labelledby="categoryDropdown">
-              <!-- Categorías se generarán dinámicamente -->
-            </ul>
-          </li>          
-        </ul>
-      </div>
-      <!-- Barra de búsqueda -->
-      <div class="inputbox">
-        <input required="required" type="text" id="searchInput" />
-        <span>Search</span>
-        <i></i>
-      </div>
-    </div>
-  </nav>
-
-  <!-- Contenido Principal -->
-  <div class="container-fluid my-5">
-    <main class="row row-cols-1 row-cols-md-4 g-4" id="gameGrid"></main>
-  </div>
-
-  <div class="modal fade" id="compraModal" tabindex="-1" aria-labelledby="compraModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content bg-dark text-white">
-        <div class="modal-header">
-          <h5 class="modal-title" id="compraModalLabel">Confirmar compra</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <!-- Información del juego -->
-          <div id="gameInfo">
-            <p id="gameTitle"></p>
-            <p id="gamePrice"></p>
+              Cancelar
+            </button>
+            <button id="confirmPaymentBtn" class="btn btn-primary">
+              Confirmar compra
+            </button>
           </div>
-  
-          <!-- Estado del pago -->
-          <div id="paymentStatus" class="d-none">
-            <p id="paymentMessage" class="text-center"></p>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-          <button id="confirmPaymentBtn" class="btn btn-primary">Confirmar compra</button>
         </div>
       </div>
     </div>
-  </div>
-  
-  <!-- Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="https://js.stripe.com/v3/"></script>
-  <script src="../../src/pages/store.js" type="module"></script>
-  <script src="../../src/services/stripeService.js" type="module"></script>
-  <script type="module">
-    import { initializeStripeService } from "../../src/services/stripeService.js";
-    initializeStripeService("pk_test_51QPCNnGAB1NMfz0pds1OFvpkXpTx3Vu1BCqntod0XYln2v45sEmUOfcizau54KfujrGHr9tmdgb7vW0mgAhAmuq700KWSKi1tP"); // Reemplaza con tu clave publicable
-  </script>
 
-</body>
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://js.stripe.com/v3/"></script>
+    <script src="../../src/pages/store.js" type="module"></script>
+    <script src="../../src/services/stripeService.js" type="module"></script>
+    <script type="module">
+      import { initializeStripeService } from "../../src/services/stripeService.js";
+      initializeStripeService(
+        "pk_test_51QPCNnGAB1NMfz0pds1OFvpkXpTx3Vu1BCqntod0XYln2v45sEmUOfcizau54KfujrGHr9tmdgb7vW0mgAhAmuq700KWSKi1tP"
+      ); // Reemplaza con tu clave publicable
+    </script>
+  </body>
 </html>
