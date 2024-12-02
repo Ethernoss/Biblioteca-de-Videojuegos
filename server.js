@@ -9,7 +9,6 @@ const connectDB = require("./db.js"); // Importa la conexión desde db.js
 const gameRoutes = require("./Main Panel/routes/routes.js"); // Importa las rutas
 const User = require("./Main Panel/models/user.js");
 const cookieParser = require("cookie-parser");
-const Library = require("./Main Panel/models/library.js");
 const {
   isAuthenticated,
   isAdmin,
@@ -43,6 +42,7 @@ app.use(
 // Servir archivos estáticos desde "public"
 app.use(express.static(path.join(__dirname, "Main Panel/public")));
 app.use("/src", express.static(path.join(__dirname, "Main Panel/src")));
+app.use("/uploads", express.static(path.join(__dirname, "Main Panel/uploads")));
 
 // Rutas de la API
 app.use("/api", gameRoutes); // Todas las rutas de la API estarán bajo /api

@@ -12,23 +12,25 @@ const path = require("path");
 
 const router = express.Router();
 
-// Configuración de almacenamiento de multer
+// Configuración de almacenamiento para multer
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, "../uploads")); // Guardar en la carpeta 'uploads'
+    const uploadPath = path.join(__dirname, "../uploads");
+    cb(null, uploadPath); // Ruta correcta a la carpeta 'uploads'
   },
   filename: (req, file, cb) => {
-    const uniqueName = `${Date.now()}-${file.originalname}`;
-    cb(null, uniqueName);
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, uniqueSuffix + "-" + file.originalname);
   },
 });
 
 const upload = multer({ storage });
 
-// Ruta para obtener todos los juegos
+// Ruta para obtener todos los juegos ordenados alfabéticamente
 router.get("/games", async (req, res) => {
   try {
-    const games = await Game.find({});
+    // Ordenar los juegos por el campo "title" en orden ascendente
+    const games = await Game.find({}).sort({ title: 1 }); // 1 para ascendente, -1 para descendente
     res.json(games);
   } catch (error) {
     console.error("Error al obtener los juegos:", error.message);
@@ -48,10 +50,13 @@ router.get("/categories", async (req, res) => {
 });
 
 // Ruta para obtener juegos por categorías
+// Ruta para obtener juegos por categorías ordenados alfabéticamente
 router.post("/gamesCategories", async (req, res) => {
   try {
-    const { data } = req.body;
-    const games = await Game.find({ category: { $in: data } });
+    const { data } = req.body; // Categorías enviadas desde el cliente
+    const games = await Game.find({ category: { $in: data } }).sort({
+      title: 1,
+    }); // Ordenar alfabéticamente por título
 
     if (!games || games.length === 0) {
       return res.status(404).json({ message: "Juegos no encontrados" });
@@ -59,8 +64,10 @@ router.post("/gamesCategories", async (req, res) => {
 
     res.json(games);
   } catch (error) {
-    console.error("Error al obtener los juegos:", error.message);
-    res.status(500).json({ message: "Error al obtener los juegos" });
+    console.error("Error al obtener los juegos por categoría:", error.message);
+    res
+      .status(500)
+      .json({ message: "Error al obtener los juegos por categoría" });
   }
 });
 
@@ -216,36 +223,45 @@ router.post("/logout", (req, res) => {
 });
 
 // Ruta para agregar un nuevo juego
-// Ruta para agregar un nuevo juego
 router.post("/games", upload.single("image"), async (req, res) => {
   try {
+    console.log("Datos recibidos en el servidor:", req.body);
+    console.log("Archivo recibido:", req.file);
+
     const { title, price, description, category } = req.body;
 
-    console.log("Datos recibidos en el servidor:", req.body);
-
+    // Validar los campos obligatorios
     if (!title || !price || !description || !category) {
       return res
         .status(400)
         .json({ message: "Todos los campos son obligatorios" });
     }
 
-    // Ruta de la imagen cargada
-    const imagePath = req.file ? `/uploads/${req.file.filename}` : null;
+    // Procesar la imagen
+    const image = req.file ? `/uploads/${req.file.filename}` : "";
 
+    // Procesar las categorías
+    const categories =
+      typeof category === "string"
+        ? category.split(",").map((cat) => cat.trim())
+        : [];
+
+    // Crear el nuevo juego
     const newGame = new Game({
       title,
       price,
       description,
-      category: category.split(",").map((cat) => cat.trim()),
-      image: imagePath,
+      category: categories, // Usar las categorías procesadas
+      image,
     });
 
     const savedGame = await newGame.save();
     console.log("Juego guardado en la base de datos:", savedGame);
+
     res.status(201).json(savedGame);
   } catch (error) {
     console.error("Error al agregar el juego:", error.message);
-    res.status(400).json({ message: "Error al agregar el juego" });
+    res.status(500).json({ message: "Error al agregar el juego" });
   }
 });
 
@@ -272,16 +288,47 @@ router.get("/games/:id", async (req, res) => {
 });
 
 // Editar un juego
-router.put("/games/:id", async (req, res) => {
+router.put("/games/:id", upload.single("image"), async (req, res) => {
   try {
-    const game = await Game.findByIdAndUpdate(req.params.id, req.body, {
+    console.log("Datos recibidos para actualizar:", req.body);
+
+    const { title, price, description, category } = req.body;
+    const gameId = req.params.id;
+
+    // Validar los campos obligatorios
+    if (!title || !price || !description || !category) {
+      return res
+        .status(400)
+        .json({ message: "Todos los campos son obligatorios" });
+    }
+
+    // Procesar la imagen
+    const image = req.file ? `/uploads/${req.file.filename}` : undefined;
+
+    // Crear objeto de actualización
+    const updateData = {
+      title,
+      price,
+      description,
+      category: category.split(",").map((cat) => cat.trim()), // Convertir categorías en arreglo
+    };
+
+    if (image) {
+      updateData.image = image; // Solo actualizar la imagen si se cargó una nueva
+    }
+
+    // Actualizar el juego en la base de datos
+    const updatedGame = await Game.findByIdAndUpdate(gameId, updateData, {
       new: true,
       runValidators: true,
     });
-    if (!game) {
+
+    if (!updatedGame) {
       return res.status(404).json({ message: "Juego no encontrado" });
     }
-    res.json(game);
+
+    console.log("Juego actualizado:", updatedGame);
+    res.status(200).json(updatedGame);
   } catch (error) {
     console.error("Error al actualizar el juego:", error.message);
     res.status(500).json({ message: "Error al actualizar el juego" });

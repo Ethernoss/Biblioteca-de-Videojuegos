@@ -93,10 +93,15 @@ document.addEventListener("DOMContentLoaded", () => {
         games = await response.json();
       }
 
-      // Renderizar juegos filtrados
-      gamesContainer.innerHTML = GameCard(games);
-      const totalPages = Math.ceil(games.length / 8); // Calcular total de páginas
-      renderPagination(totalPages, 1);
+      // Asegurar la paginación
+      const itemsPerPage = 8; // Juegos por página
+      const totalPages = Math.ceil(games.length / itemsPerPage);
+
+      // Mostrar solo la primera página por defecto
+      const paginatedGames = games.slice(0, itemsPerPage);
+      gamesContainer.innerHTML = GameCard(paginatedGames);
+
+      renderPagination(totalPages, 1, category); // Renderizar botones de paginación
     } catch (error) {
       console.error("Error al filtrar por categoría:", error.message);
 
@@ -143,7 +148,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     try {
-      const response = await fetch("/api/games", {
+      const response = await fetch("/api/games/", {
         method: "POST",
         body: formData, // Enviar los datos como FormData
       });
@@ -169,36 +174,35 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Manejar formulario para editar juegos
   const handleEditGame = async (event) => {
-    event.preventDefault();
+    event.preventDefault(); // Evitar recargar la página
 
-    const gameId = editGameForm.dataset.id; // Obtener el ID como cadena
-    const updatedGame = {
-      title: document.getElementById("editGameTitle").value,
-      price: parseFloat(document.getElementById("editGamePrice").value),
-      description: document.getElementById("editGameDescription").value,
-      category: document
-        .getElementById("editGameCategory")
-        .value.split(",")
-        .map((cat) => cat.trim()),
-      image: document.getElementById("editGameImage").value,
-    };
+    const editGameForm = document.getElementById("editGameForm");
+    const formData = new FormData(editGameForm); // Crear un FormData con los datos del formulario
+
+    const gameId = editGameForm.dataset.id; // Obtener el ID del juego desde el dataset del formulario
+
+    // Debug para verificar los datos enviados
+    for (let [key, value] of formData.entries()) {
+      console.log(`${key}: ${value}`);
+    }
 
     try {
-      const response = await fetch(`/api/${gameId}`, {
+      const response = await fetch(`/api/games/${gameId}`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updatedGame),
+        body: formData, // Enviar los datos como FormData
       });
 
       if (response.ok) {
         console.log("Juego actualizado correctamente");
+        const result = await response.json();
+        console.log("Respuesta del servidor:", result);
+
         await Dashboard(); // Actualizar la vista del Dashboard
         const modal = bootstrap.Modal.getInstance(
           document.getElementById("editGameModal")
         );
         modal.hide(); // Cerrar el modal
+        editGameForm.reset(); // Reiniciar el formulario
       } else {
         console.error("Error al actualizar el juego");
       }
@@ -216,24 +220,24 @@ document.addEventListener("DOMContentLoaded", () => {
       const gameId = target.dataset.id;
 
       try {
-        const response = await fetch(`/api/${gameId}`);
+        const response = await fetch(`/api/games/${gameId}`); // Cambiar ruta si es necesario
         if (!response.ok) {
           throw new Error("Error al obtener el juego desde la API");
         }
 
         const game = await response.json();
+        console.log("Datos del juego cargados:", game); // Depuración
 
-        // Llenar los campos del modal con los datos obtenidos
+        // Precargar los campos del modal
         document.getElementById("editGameTitle").value = game.title;
         document.getElementById("editGamePrice").value = game.price;
         document.getElementById("editGameCategory").value =
-          game.category.join(", "); // Convertir array a string
+          game.category.join(", ");
         document.getElementById("editGameDescription").value = game.description;
-        document.getElementById("editGameImage").value = game.image;
 
         // Guardar el ID del juego en el dataset del formulario
         const editGameForm = document.getElementById("editGameForm");
-        editGameForm.dataset.id = gameId;
+        editGameForm.dataset.id = game._id;
       } catch (error) {
         console.error("Error al cargar los datos del juego:", error.message);
       }
@@ -252,9 +256,10 @@ document.addEventListener("DOMContentLoaded", () => {
       deleteModal.show();
     }
   };
-  const confirmDeleteBtn = document.getElementById("confirmDeleteBtn");
 
   // Manejar eliminación de juegos
+  const confirmDeleteBtn = document.getElementById("confirmDeleteBtn");
+
   confirmDeleteBtn.addEventListener("click", async () => {
     const gameId = confirmDeleteBtn.dataset.id; // Obtener el ID del juego desde el botón
 
@@ -327,3 +332,47 @@ document.addEventListener("DOMContentLoaded", () => {
     editGameForm.addEventListener("submit", handleEditGame);
   }
 });
+
+// const handleAddGame = async (event) => {
+//   event.preventDefault(); // Evitar recargar la página
+
+//   const newGame = {
+//     title: document.getElementById("gameTitle").value,
+//     price: parseFloat(document.getElementById("gamePrice").value),
+//     description: document.getElementById("gameDescription").value,
+//     category: document
+//       .getElementById("gameCategory")
+//       .value.split(",")
+//       .map((cat) => cat.trim()), // Convertir categorías a un arreglo
+//     image: document.getElementById("gameImage").value,
+//   };
+
+//   console.log("Datos enviados al backend:", newGame);
+
+//   try {
+//     const response = await fetch("/api/", {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify(newGame),
+//     });
+
+//     if (response.ok) {
+//       console.log("Juego agregado correctamente");
+//       const result = await response.json();
+//       console.log("Respuesta del servidor:", result);
+
+//       await Dashboard(); // Actualizar el Dashboard
+//       const modal = bootstrap.Modal.getInstance(
+//         document.getElementById("addGameModal")
+//       );
+//       modal.hide(); // Cerrar el modal
+//       addGameForm.reset(); // Reiniciar el formulario
+//     } else {
+//       console.error("Error al agregar el juego");
+//     }
+//   } catch (error) {
+//     console.error("Error al enviar la solicitud:", error);
+//   }
+// };
