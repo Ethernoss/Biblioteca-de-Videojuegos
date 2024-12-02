@@ -144,8 +144,10 @@ app.get("/session-status", isAuthenticated, async (req, res) => {
       await user.library.save();
     }
 
+    // Incluir customer_email en la respuesta
     res.send({
       status: session.payment_status,
+      customer_email: session.customer_details.email,
     });
   } catch (error) {
     console.error("Error recuperando el estado de la sesión:", error.message);
