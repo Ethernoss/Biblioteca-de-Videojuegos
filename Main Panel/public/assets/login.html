@@ -151,7 +151,11 @@
           ).value;
 
           if (password !== confirmPassword) {
-            alert("Las contraseñas no coinciden");
+            Swal.fire({
+              icon: "error",
+              title: "Error",
+              text: "Las contraseñas no coinciden",
+            });
             return;
           }
 
@@ -168,14 +172,26 @@
             });
 
             if (response.ok) {
-              alert("Usuario registrado exitosamente");
+              Swal.fire({
+                icon: "success",
+                title: "Éxito",
+                text: "Usuario registrado exitosamente",
+              });
               closeModal("register");
             } else {
               const { message } = await response.json();
-              alert(message);
+              Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: message,
+              });
             }
           } catch (error) {
-            alert("Error al registrar usuario");
+            Swal.fire({
+              icon: "error",
+              title: "Error",
+              text: "Error al registrar usuario",
+            });
           }
         });
 
@@ -203,18 +219,31 @@
             if (response.ok) {
               const { message, redirect, token } = await response.json(); // Recibimos el token del servidor
               localStorage.setItem("token", token);
-              alert(message);
-
-              // Redirigir al usuario según el rol
-              window.location.href = redirect;
+              Swal.fire({
+                icon: "success",
+                title: "Éxito",
+                text: message,
+              }).then(() => {
+                // Redirigir al usuario según el rol
+                window.location.href = redirect;
+              });
             } else {
               const { message } = await response.json();
-              alert(message);
+              Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: message,
+              });
             }
           } catch (error) {
-            alert("Error al iniciar sesión");
+            Swal.fire({
+              icon: "error",
+              title: "Error",
+              text: "Error al iniciar sesión",
+            });
           }
         });
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   </body>
 </html>

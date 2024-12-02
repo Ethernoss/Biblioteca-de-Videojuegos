@@ -297,17 +297,27 @@
           });
 
           if (response.ok) {
-            alert("Sesión cerrada exitosamente");
-            window.location.href = "/login"; // Redirige al login después de cerrar sesión
+            Swal.fire({
+              icon: "success",
+              title: "Sesión cerrada",
+              text: "Has cerrado sesión exitosamente",
+            }).then(() => {
+              window.location.href = "/login"; // Redirige al login después de cerrar sesión
+            });
           } else {
             const { message } = await response.json();
             alert(`Error: ${message}`);
           }
         } catch (error) {
           console.error("Error al cerrar sesión:", error);
-          alert("Error al cerrar sesión");
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Error al cerrar sesión",
+          });
         }
       });
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   </body>
 </html>
