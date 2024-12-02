@@ -22,16 +22,23 @@
     <main>
       <!-- Contenedor de Login -->
       <div class="login-container" id="loginContainer">
-        <h1>Welcome back!</h1>
+        <h1>Bienvenido a Steam 2</h1>
+        <p class="welcome-text">
+          Por favor, inicia sesión para disfrutar de nuestra plataforma.
+        </p>
         <form>
+          <label for="username" class="input-label">Usuario</label>
           <input
             type="text"
+            id="username"
             placeholder="Usuario"
             class="input-field"
             required
           />
+          <label for="password" class="input-label">Contraseña</label>
           <input
             type="password"
+            id="password"
             placeholder="Contraseña"
             class="input-field"
             required
@@ -54,26 +61,40 @@
           >
           <h1>Regístrate</h1>
           <form>
+            <label for="register-username" class="input-label">Usuario</label>
             <input
               type="text"
+              id="register-username"
               placeholder="Usuario"
               class="input-field"
               required
             />
+            <label for="register-email" class="input-label"
+              >Correo Electrónico</label
+            >
             <input
               type="email"
+              id="register-email"
               placeholder="Correo Electrónico"
               class="input-field"
               required
             />
+            <label for="register-password" class="input-label"
+              >Contraseña</label
+            >
             <input
               type="password"
+              id="register-password"
               placeholder="Contraseña"
               class="input-field"
               required
             />
+            <label for="register-confirm-password" class="input-label"
+              >Confirmar Contraseña</label
+            >
             <input
               type="password"
+              id="register-confirm-password"
               placeholder="Confirmar Contraseña"
               class="input-field"
               required
@@ -181,7 +202,7 @@
 
             if (response.ok) {
               const { message, redirect, token } = await response.json(); // Recibimos el token del servidor
-              localStorage.setItem("token", token)
+              localStorage.setItem("token", token);
               alert(message);
 
               // Redirigir al usuario según el rol
